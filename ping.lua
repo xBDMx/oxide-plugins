@@ -1,5 +1,5 @@
 PLUGIN.Title = "Ping"
-PLUGIN.Version = V(0, 2, 2)
+PLUGIN.Version = V(0, 2, 3)
 PLUGIN.Description = "Player ping checking and with optional high ping rejection on join."
 PLUGIN.Author = "Wulfspider"
 PLUGIN.Url = "http://forum.rustoxide.com/plugins/656/"
@@ -46,11 +46,12 @@ function PLUGIN:cmdPing(player, cmd, args)
         return
     end
     if args.Length ~= 1 then player:SendConsoleCommand("chat.add \"" .. self.Config.Settings.ChatName .. "\" \"" .. self.Config.Messages.ChatHelp .. "\"") return end
-    local argument = args[1]
+    local argument = args[0]
     local targetPlayer = global.BasePlayer.Find(argument)
     if not targetPlayer then player:SendConsoleCommand("chat.add \"" .. self.Config.Settings.ChatName .. "\" \"" .. self.Config.Messages.InvalidTarget .. "\"") return end
     local ping = self:PingCheck(targetPlayer.net.connection)
-    player:SendConsoleCommand("chat.add \"" .. self.Config.Settings.ChatName .. "\" \"" .. ping .. " ms\"")
+    local message = self.Config.Messages.PingCheck:gsub("{player}", targetPlayer.displayName); local message = message:gsub("{ping}", ping)
+    player:SendConsoleCommand("chat.add \"" .. self.Config.Settings.ChatName .. "\" \"" .. message .. "\"")
 end
 
 function PLUGIN:ccmdPing(args)
@@ -60,6 +61,7 @@ function PLUGIN:ccmdPing(args)
     local targetPlayer = global.BasePlayer.Find(args:GetString(0))
     if targetPlayer == nil then args:ReplyWith(self.Config.Messages.InvalidTarget); return end
     local ping = self:PingCheck(targetPlayer.net.connection)
+    local message = self.Config.Messages.PingCheck:gsub("{player}", targetPlayer.displayName); local message = message:gsub("{ping}", ping)
     args:ReplyWith(targetPlayer.displayName .. " has a ping of " .. ping .. "ms")
 end
 
@@ -80,7 +82,7 @@ function PLUGIN:LoadDefaultConfig()
     self.Config.Settings.ChatCommand = self.Config.Settings.ChatCommand or "ping"
     self.Config.Settings.ChatName = self.Config.Settings.ChatName or "PING"
     self.Config.Settings.ChatNameHelp = self.Config.Settings.ChatNameHelp or self.Config.Settings.HelpName or "HELP"
-    self.Config.Settings.ConsoleCommand = self.Config.Settings.ConsoleCommand or "player.ping"
+    self.Config.Settings.ConsoleCommand = self.Config.Settings.ConsoleCommand or "global.ping"
     self.Config.Settings.MaxPing = tonumber(self.Config.Settings.MaxPing) or 200 -- Milliseconds
     self.Config.Settings.PingKick = self.Config.Settings.PingKick or "true"
     self.Config.Settings.ShowKick = self.Config.Settings.ShowKick or "true"
@@ -89,6 +91,7 @@ function PLUGIN:LoadDefaultConfig()
     self.Config.Messages.ConsoleHelp = self.Config.Messages.ConsoleHelp or "Use player.ping player to check target player's ping"
     self.Config.Messages.InvalidTarget = self.Config.Messages.InvalidTarget or "Invalid target player! Please try again"
     self.Config.Messages.NoPermission = self.Config.Messages.NoPermission or "You do not have permission to use this command!"
+    self.Config.Messages.PingCheck = self.Config.Messages.PingCheck or "{player} has a ping of {ping}ms"
     self.Config.Messages.PlayerConnected = self.Config.Messages.PlayerConnected  or "{player} ({steamid}) connected with {ping}ms ping"
     self.Config.Messages.PlayerKicked = self.Config.Messages.PlayerKicked or self.Config.Messages.Kicked or "{player} was kicked for high ping ({ping}ms)"
     self.Config.Messages.Rejected = self.Config.Messages.Rejected or "Sorry, your ping is too high for this server!"
