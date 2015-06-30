@@ -1,5 +1,5 @@
 PLUGIN.Title = "Plugin List"
-PLUGIN.Version = V(0, 1, 0)
+PLUGIN.Version = V(0, 1, 1)
 PLUGIN.Description = "Shows installed plugins and plugin information."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1168/"
@@ -9,10 +9,12 @@ local game = "rok"
 
 --[[ Do NOT edit the config here, instead edit PluginList.json in oxide/config ! ]]
 
+local messages
 function PLUGIN:LoadDefaultConfig()
     self.Config.Messages = self.Config.Messages or {}
-    self.Config.Messages.InstalledPlugins = self.Config.Messages.InstalledPlugins or "Installed plugin(s):"
-    self.Config.Messages.NoPluginFound = self.Config.Messages.NoPluginFound or "No plugin found with that name!"
+    messages = self.Config.Messages
+    messages.InstalledPlugins = messages.InstalledPlugins or "<size=18><b><color=#FAB269>Installed plugin(s)</color></b></size>:"
+    messages.NoPluginFound = messages.NoPluginFound or "No plugin found with that name!"
 
     self:SaveConfig()
 end
@@ -44,16 +46,16 @@ function PLUGIN:ListPlugins(player, cmd, args)
         end
 
         local message = table.concat(pluginTable, ", ")
-        SendChatMessage(player, self.Config.Messages.InstalledPlugins .. " " .. message)
+        SendChatMessage(player, messages.InstalledPlugins .. " " .. message)
     end
 
     if args.Length == 1 then
         local plugin = plugins.Find(args[0])
 
-        if not plugin then SendChatMessage(player, self.Config.Messages.NoPluginFound) return end
+        if not plugin then SendChatMessage(player, messages.NoPluginFound) return end
 
-        local message = plugin.Title .. " v" .. plugin.Version:ToString()
-        if plugin.Description then message = message .. "\n" .. plugin.Description end
+        local message = "<size=18><b><color=#FAB269>" .. plugin.Title .. " v" .. plugin.Version:ToString() .. "</color></b></size>"
+        if plugin.Description then message = message .. "\n<size=15>" .. plugin.Description .. "</size>" end
         if plugin.Object.ResourceId and plugin.Object.ResourceId ~= "" and tonumber(plugin.Object.ResourceId) ~= 0 then
             message = message .. "\nhttp://oxidemod.org/plugins/" .. plugin.Object.ResourceId .. "/"
         end

@@ -2,10 +2,10 @@ PLUGIN.Title = "Plugin List"
 PLUGIN.Version = V(0, 1, 1)
 PLUGIN.Description = "Shows installed plugins and plugin information."
 PLUGIN.Author = "Wulf / Luke Spragg"
-PLUGIN.Url = "http://oxidemod.org/plugins/1157/"
-PLUGIN.ResourceId = 1157
+PLUGIN.Url = "http://oxidemod.org/plugins/1167/"
+PLUGIN.ResourceId = 1167
 
-local game = "rust"
+local game = "legacy"
 
 --[[ Do NOT edit the config here, instead edit PluginList.json in oxide/config ! ]]
 
