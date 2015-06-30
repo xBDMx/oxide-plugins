@@ -1,7 +1,7 @@
 PLUGIN.Title = "Auth Level"
-PLUGIN.Version = V(0, 2, 3)
+PLUGIN.Version = V(0, 2, 4)
 PLUGIN.Description = "Add/remove players as owner/moderator/player via command."
-PLUGIN.Author = "Wulfspider"
+PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/702/"
 PLUGIN.ResourceId = 702
 
@@ -9,31 +9,28 @@ local debug = false
 
 --[[ Do NOT edit the config here, instead edit AuthLevel.json in oxide/config ! ]]
 
+local messages, settings
 function PLUGIN:LoadDefaultConfig()
-    self.Config.Settings = self.Config.Settings or {}
-    self.Config.Settings.Command = self.Config.Settings.Command or self.Config.Settings.ChatCommand or "authlevel"
-
     self.Config.Messages = self.Config.Messages or {}
-    self.Config.Messages.AuthLevelSet = self.Config.Messages.AuthLevelSet or "Auth level set to {level} for {player}!"
-    self.Config.Messages.ChatHelp = self.Config.Messages.ChatHelp or "Use '/authlevel player authlevel' to set the auth level for player"
-    self.Config.Messages.ConsoleHelp = self.Config.Messages.ConsoleHelp or "Use 'authlevel player authlevel' to set the auth level for player"
-    self.Config.Messages.InvalidAuthLevel = self.Config.Messages.InvalidAuthLevel or "Invalid auth level! Valid levels are 0 (player), 1 (moderator), and 2 (owner)"
-    self.Config.Messages.InvalidTarget = self.Config.Messages.InvalidTarget or "Invalid player name! Please try again"
-    self.Config.Messages.NoPermission = self.Config.Messages.NoPermission or "You do not have permission to use this command!"
+    messages = self.Config.Messages
+    messages.AuthLevelSet = messages.AuthLevelSet or "Auth level set to {level} for {player}!"
+    messages.ChatHelp = messages.ChatHelp or "Use '/authlevel player authlevel' to set the auth level for player"
+    messages.ConsoleHelp = messages.ConsoleHelp or "Use 'authlevel player authlevel' to set the auth level for player"
+    messages.InvalidAuthLevel = messages.InvalidAuthLevel or "Invalid auth level! Valid levels are 0 (player), 1 (moderator), and 2 (owner)"
+    messages.InvalidTarget = messages.InvalidTarget or "Invalid player name! Please try again"
+    messages.NoPermission = messages.NoPermission or "You do not have permission to use this command!"
 
-    self.Config.Settings.ChatName = nil -- Removed in 0.2.0
-    self.Config.Settings.ChatNameHelp = nil -- Removed in 0.2.0
-    self.Config.Settings.AuthLevel = nil -- Removed in 0.2.3
-    self.Config.Settings.ChatCommand = nil -- Removed in 0.2.3
-    self.Config.Settings.ConsoleCommand = nil -- Removed in 0.2.3
+    self.Config.Settings = self.Config.Settings or {}
+    settings = self.Config.Settings
+    settings.Command = settings.Command or "authlevel"
 
     self:SaveConfig()
 end
 
 function PLUGIN:Init()
     self:LoadDefaultConfig()
-    command.AddChatCommand(self.Config.Settings.Command, self.Plugin, "ChatCommand")
-    command.AddConsoleCommand("global." .. self.Config.Settings.Command, self.Plugin, "ConsoleCommand")
+    command.AddChatCommand(settings.Command, self.Plugin, "ChatCommand")
+    command.AddConsoleCommand("global." .. settings.Command, self.Plugin, "ConsoleCommand")
     permission.RegisterPermission("authlevel.set", self.Plugin)
 end
 
@@ -53,9 +50,9 @@ local function FindPlayer(self, player, target)
     local targetPlayer = global.BasePlayer.Find(target)
     if not targetPlayer then
         if not player then
-            Print(self, self.Config.Messages.InvalidTarget)
+            Print(self, messages.InvalidTarget)
         else
-            rust.SendChatMessage(player, self.Config.Messages.InvalidTarget)
+            rust.SendChatMessage(player, messages.InvalidTarget)
         end
         return
     end
@@ -81,75 +78,71 @@ local function AuthLevel(targetPlayer, authLevel)
 end
 
 function PLUGIN:ChatCommand(player, cmd, args)
-    local steamId = rust.UserIDFromPlayer(player)
-    if player and not HasPermission(steamId, "authlevel.set") then
-        rust.SendChatMessage(player, self.Config.Messages.NoPermission)
+    if player and not HasPermission(rust.UserIDFromPlayer(player), "authlevel.set") then
+        rust.SendChatMessage(player, messages.NoPermission)
         return
     end
 
     if args.Length ~= 2 then
-        rust.SendChatMessage(player, self.Config.Messages.ChatHelp)
+        rust.SendChatMessage(player, messages.ChatHelp)
         return
     end
 
     local targetPlayer = FindPlayer(self, player, args[0])
     if not targetPlayer then
-        rust.SendChatMessage(player, self.Config.Messages.InvalidTarget)
+        rust.SendChatMessage(player, messages.InvalidTarget)
         return
     end
     local authLevel = string.lower(args[1])
     if authLevel ~= "2" and authLevel ~= "1" and authLevel ~= "0" then
-        rust.SendChatMessage(player, self.Config.Messages.InvalidAuthLevel)
+        rust.SendChatMessage(player, messages.InvalidAuthLevel)
         return
     end
 
     AuthLevel(targetPlayer, authLevel)
 
-    local message = ParseMessage(self.Config.Messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
+    local message = ParseMessage(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
     rust.SendChatMessage(player, message)
 end
 
 function PLUGIN:ConsoleCommand(args)
-    local player, steamId
-    if args.connection then
-        player = args.connection.player
-        steamId = rust.UserIDFromPlayer(player)
-    end
+    local player
+    if args.connection then player = args.connection.player end
 
-    if player and not HasPermission(steamId, "authlevel.set") then
-        args:ReplyWith(self.Config.Messages.NoPermission)
+    if player and not HasPermission(rust.UserIDFromPlayer(player), "authlevel.set") then
+        args:ReplyWith(messages.NoPermission)
         return
     end
 
     if not args:HasArgs(2) then
         if not player then
-            Print(self, self.Config.Messages.ConsoleHelp)
+            Print(self, messages.ConsoleHelp)
         else
-            args:ReplyWith(self.Config.Messages.ConsoleHelp)
+            args:ReplyWith(messages.ConsoleHelp)
         end
         return
     end
 
     local targetPlayer = global.BasePlayer.Find(args:GetString(0))
-    if not targetPlayer then args:ReplyWith(self.Config.Messages.InvalidTarget); return end
+    if not targetPlayer then args:ReplyWith(messages.InvalidTarget); return end
     local authLevel = args:GetString(1)
     if authLevel ~= "2" and authLevel ~= "1" and authLevel ~= "0" then
         if not player then
-            Print(self, self.Config.Messages.InvalidAuthLevel)
+            Print(self, messages.InvalidAuthLevel)
         else
-            args:ReplyWith(self.Config.Messages.InvalidAuthLevel)
+            args:ReplyWith(messages.InvalidAuthLevel)
         end
         return
     end
 
     AuthLevel(targetPlayer, authLevel)
 
-    local message = ParseMessage(self.Config.Messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
+    local message = ParseMessage(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
     if player then args:ReplyWith(message) else print(message) end
 end
 
 function PLUGIN:SendHelpText(player)
     if HasPermission(rust.UserIDFromPlayer(player), "authlevel.set") then
-        rust.SendChatMessage(player, self.Config.Messages.ChatHelp)
+        rust.SendChatMessage(player, messages.ChatHelp)
     end
 end

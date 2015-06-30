@@ -1,5 +1,5 @@
 PLUGIN.Title = "Sleep"
-PLUGIN.Version = V(0, 1, 1)
+PLUGIN.Version = V(0, 1, 2)
 PLUGIN.Description = "Allows players with permission to get a well-rested sleep."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1156/"
@@ -9,26 +9,29 @@ local debug = false
 
 --[[ Do NOT edit the config here, instead edit Sleep.json in oxide/config ! ]]
 
+local messages, settings
 function PLUGIN:LoadDefaultConfig()
-    self.Config.Settings = self.Config.Settings or {}
-    self.Config.Settings.Command = self.Config.Settings.Command or "sleep"
-    self.Config.Settings.Cure = self.Config.Settings.Cure or "false"
-    self.Config.Settings.CurePercent = tonumber(self.Config.Settings.CurePercent) or 5
-    self.Config.Settings.Heal = self.Config.Settings.Heal or "true"
-    self.Config.Settings.HealPercent = tonumber(self.Config.Settings.HealPercent) or 5
-    self.Config.Settings.Realism = self.Config.Settings.Realism or "true"
-    self.Config.Settings.RealismPercent = tonumber(self.Config.Settings.RealismPercent) or 5
-    self.Config.Settings.Restore = self.Config.Settings.Restore or "true"
-    self.Config.Settings.RestorePercent = tonumber(self.Config.Settings.RestorePercent) or 5
-    self.Config.Settings.UpdateRate = tonumber(self.Config.Settings.UpdateRate) or 10
-
     self.Config.Messages = self.Config.Messages or {}
-    self.Config.Messages.CantSleep = self.Config.Messages.CantSleep or "You can't go to sleep right now!"
-    self.Config.Messages.ChatHelp = self.Config.Messages.ChatHelp or "Use '/sleep' to go to sleep and rest"
-    self.Config.Messages.Dirty = self.Config.Messages.Dirty or "You seem to be a bit dirty, go take a dip!"
-    self.Config.Messages.Hungry = self.Config.Messages.Hungry or "You seem to be a bit hungry, eat something!"
-    self.Config.Messages.Rested = self.Config.Messages.Rested or "You have awaken restored and rested!"
-    self.Config.Messages.Thirsty = self.Config.Messages.Thirsty or "You seem to be a bit thirsty, drink something!"
+    messages = self.Config.Messages
+    messages.CantSleep = messages.CantSleep or "You can't go to sleep right now!"
+    messages.ChatHelp = messages.ChatHelp or "Use '/sleep' to go to sleep and rest"
+    messages.Dirty = messages.Dirty or "You seem to be a bit dirty, go take a dip!"
+    messages.Hungry = messages.Hungry or "You seem to be a bit hungry, eat something!"
+    messages.Rested = messages.Rested or "You have awaken restored and rested!"
+    messages.Thirsty = messages.Thirsty or "You seem to be a bit thirsty, drink something!"
+
+    self.Config.Settings = self.Config.Settings or {}
+    settings = self.Config.Settings
+    settings.Command = settings.Command or "sleep"
+    settings.Cure = settings.Cure or "false"
+    settings.CurePercent = tonumber(settings.CurePercent) or 5
+    settings.Heal = settings.Heal or "true"
+    settings.HealPercent = tonumber(settings.HealPercent) or 5
+    settings.Realism = settings.Realism or "true"
+    settings.RealismPercent = tonumber(settings.RealismPercent) or 5
+    settings.Restore = settings.Restore or "true"
+    settings.RestorePercent = tonumber(settings.RestorePercent) or 5
+    settings.UpdateRate = tonumber(settings.UpdateRate) or 10
 
     self:SaveConfig()
 end
@@ -42,17 +45,13 @@ end
 
 function PLUGIN:Init()
     self:LoadDefaultConfig()
-    command.AddChatCommand(self.Config.Settings.Command, self.Plugin, "ChatCommand")
+    command.AddChatCommand(settings.Command, self.Plugin, "ChatCommand")
     permission.RegisterPermission("sleep.allowed", self.Plugin)
 end
 
-local function Sleep(player)
-    player:StartSleeping()
-end
+local function Sleep(player) player:StartSleeping() end
 
-local function WakeUp(player)
-    player:EndSleeping()
-end
+local function WakeUp(player) player:EndSleeping() end
 
 local function Cure(self, player, percent)
     -- Poison -- Default: 0, Min: 0, Max: 100
@@ -148,27 +147,27 @@ function PLUGIN:ChatCommand(player, cmd, args)
     local steamId = rust.UserIDFromPlayer(player)
 
     if not HasPermission(steamId, "sleep.allowed") then
-        rust.SendChatMessage(player, self.Config.Messages.CantSleep)
+        rust.SendChatMessage(player, messages.CantSleep)
         return
     end
 
     Sleep(player)
 
-    sleepTimer[steamId] = timer.Repeat(self.Config.Settings.UpdateRate, 0, function()
+    sleepTimer[steamId] = timer.Repeat(settings.UpdateRate, 0, function()
         if player:IsSleeping() then
-            if self.Config.Settings.Cure == "true" then
-                Cure(self, player, self.Config.Settings.CurePercent)
+            if settings.Cure == "true" then
+                Cure(self, player, settings.CurePercent)
             end
-            if self.Config.Settings.Heal == "true" then
-                Heal(self, player, self.Config.Settings.HealPercent)
-            end
-
-            if self.Config.Settings.Realism == "true" then
-                Realism(self, player, self.Config.Settings.RealismPercent)
+            if settings.Heal == "true" then
+                Heal(self, player, settings.HealPercent)
             end
 
-            if self.Config.Settings.Restore == "true" then
-                Restore(self, player, self.Config.Settings.RestorePercent)
+            if settings.Realism == "true" then
+                Realism(self, player, settings.RealismPercent)
+            end
+
+            if settings.Restore == "true" then
+                Restore(self, player, settings.RestorePercent)
             end
 
             player.metabolism:SendChangesToClient()
@@ -182,24 +181,24 @@ function PLUGIN:OnPlayerSleepEnded(player)
     if sleepTimer[steamId] then
         sleepTimer[steamId]:Destroy()
 
-        rust.SendChatMessage(player, self.Config.Messages.Rested)
+        rust.SendChatMessage(player, messages.Rested)
     end
 
     if player.metabolism.calories.value < 40 then
-        rust.SendChatMessage(player, self.Config.Messages.Hungry)
+        rust.SendChatMessage(player, messages.Hungry)
     end
 
     if player.metabolism.dirtyness.value > 0 then
-        rust.SendChatMessage(player, self.Config.Messages.Dirty)
+        rust.SendChatMessage(player, messages.Dirty)
     end
 
     if player.metabolism.hydration.value < 40 then
-        rust.SendChatMessage(player, self.Config.Messages.Thirsty)
+        rust.SendChatMessage(player, messages.Thirsty)
     end
 end
 
 function PLUGIN:SendHelpText(player)
     if HasPermission(rust.UserIDFromPlayer(player), "sleep.allowed") then
-        rust.SendChatMessage(player, self.Config.Messages.ChatHelp)
+        rust.SendChatMessage(player, messages.ChatHelp)
     end
 end

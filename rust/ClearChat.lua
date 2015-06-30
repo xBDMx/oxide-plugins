@@ -7,18 +7,18 @@ PLUGIN.ResourceId = 1183
 
 --[[ Do NOT edit the config here, instead edit ClearChat.json in oxide/config ! ]]
 
-local settings, messages
+local messages, settings
 function PLUGIN:LoadDefaultConfig()
+    self.Config.Messages = self.Config.Messages or {}
+    messages = self.Config.Messages
+    messages.Cleared = messages.Cleared or "<color=orange><size=18><b><i>Chat Cleared!</i></b></size></color>"
+    messages.Welcome = messages.Welcome or "<color=orange><size=20><b>Welcome to {server}!</b></size></color>"
+
     self.Config.Settings = self.Config.Settings or {}
     settings = self.Config.Settings
     settings.ChatCommand = settings.ChatCommand or "clear"
     settings.ClearedMessage = settings.ClearedMessage or "true"
     settings.WelcomeMessage = settings.WelcomeMessage or "true"
-
-    self.Config.Messages = self.Config.Messages or {}
-    messages = self.Config.Messages
-    messages.Cleared = messages.Cleared or "<color=orange><size=18><b><i>Chat Cleared!</i></b></size></color>"
-    messages.Welcome = messages.Welcome or "<color=orange><size=20><b>Welcome to {server}!</b></size></color>"
 
     self:SaveConfig()
 end
@@ -50,6 +50,6 @@ function PLUGIN:ClearChat(player, cmd)
         .. "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
         .. "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
     rust.SendChatMessage(player, magic)
-    
+
     if cmd and settings.ClearedMessage == "true" then rust.SendChatMessage(player, messages.Cleared) end
 end

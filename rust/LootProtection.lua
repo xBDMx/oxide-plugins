@@ -1,5 +1,5 @@
 PLUGIN.Title = "Loot Protection"
-PLUGIN.Version = V(0, 2, 0)
+PLUGIN.Version = V(0, 2, 1)
 PLUGIN.Description = "Prevents players with permission from being looted by other players."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1150/"
@@ -7,9 +7,11 @@ PLUGIN.ResourceId = 1150
 
 --[[ Do NOT edit the config here, instead edit LootProtection.json in oxide/config ! ]]
 
+local messages
 function PLUGIN:LoadDefaultConfig()
-    self.Config.Messages = self.Config.Messages or {}
-    self.Config.Messages.CantBeLooted = self.Config.Messages.CantBeLooted or "{player} can't be looted!"
+    self.Config.Messages = self.Config.Mesasges or {}
+    messages = self.Config.Messages
+    messages.CantBeLooted = messages.CantBeLooted or "{player} can't be looted!"
 
     self:SaveConfig()
 end
@@ -40,7 +42,7 @@ function PLUGIN:OnPlayerLoot(source, target)
         if HasPermission(targetId, "loot.protection") then
             timer.NextFrame(function() source:Clear() end)
 
-            local message = self.Config.Messages.CantBeLooted:gsub("{player}", targetPlayer.displayName)
+            local message = messages.CantBeLooted:gsub("{player}", targetPlayer.displayName)
             rust.SendChatMessage(sourcePlayer, message)
         end
     end

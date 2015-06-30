@@ -9,7 +9,7 @@ local debug = false
 
 --[[ Do NOT edit the config here, instead edit EmailAPI.json in oxide/config ! ]]
 
-local api, settings, messages
+local api, messages, settings
 function PLUGIN:LoadDefaultConfig()
     self.Config.Api = self.Config.Api or {}
     api = self.Config.Api
@@ -18,13 +18,6 @@ function PLUGIN:LoadDefaultConfig()
     api.Service = api.Service or api.Provider or ""
     api.PublicKey = api.PublicKey or api.KeyPublic or ""
     api.Username = api.Username or ""
-
-    self.Config.Settings = self.Config.Settings or {}
-    settings = self.Config.Settings
-    settings.FromEmail = settings.FromEmail or "change@me.tld"
-    settings.FromName = settings.FromName or "Change Me"
-    settings.ToEmail = settings.ToEmail or "change@me.tld"
-    settings.ToName = settings.ToName or "Change Me"
 
     self.Config.Messages = self.Config.Messages or {}
     messages = self.Config.Messages
@@ -37,6 +30,13 @@ function PLUGIN:LoadDefaultConfig()
     messages.SetPublicKey = messages.SetPublicKey or "Public key not set! Please set it and try again."
     messages.SetUsername = messages.SetUsername or "Username not set! Please set it and try again."
     messages.SubjectRequired = messages.SubjectRequired or "Subject not given! Please enter one and try again"
+
+    self.Config.Settings = self.Config.Settings or {}
+    settings = self.Config.Settings
+    settings.FromEmail = settings.FromEmail or "change@me.tld"
+    settings.FromName = settings.FromName or "Change Me"
+    settings.ToEmail = settings.ToEmail or "change@me.tld"
+    settings.ToName = settings.ToName or "Change Me"
 
     settings.ApiKeyPrivate = nil -- Removed in 0.3.0
     settings.ApiKeyPublic = nil -- Removed in 0.3.0
