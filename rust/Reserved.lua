@@ -1,5 +1,5 @@
 PLUGIN.Title = "Reserved"
-PLUGIN.Version = V(0, 2, 0)
+PLUGIN.Version = V(0, 2, 1)
 PLUGIN.Description = "Reserves a number of slots so that reserved players can connect."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/674/"

@@ -102,8 +102,6 @@ function PLUGIN:Respawn(player)
         else
             player:Respawn(true)
         end
-
-        if settings.AutoWakeUp == "true" then player:EndSleeping() end
     end, self.Plugin)
 end
 
@@ -114,5 +112,7 @@ end
 
 function PLUGIN:OnPlayerRespawned(player)
     if debug then Print(self, "Spawn location: " .. tostring(player.transform.position)) end
+
     player:ClientRPCPlayer(nil, player, "ForcePositionTo", player.transform.position)
+    if settings.AutoWakeUp == "true" and player:IsSleeping() then player:EndSleeping() end
 end
