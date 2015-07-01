@@ -1,5 +1,5 @@
 PLUGIN.Title = "Master Key"
-PLUGIN.Version = V(0, 1, 2)
+PLUGIN.Version = V(0, 1, 3)
 PLUGIN.Description = "Allows players with permission to unlock anything."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1151/"
@@ -7,16 +7,19 @@ PLUGIN.ResourceId = 1151
 
 --[[ Do NOT edit the config here, instead edit MasterKey.json in oxide/config ! ]]
 
+local messages, settings
 function PLUGIN:LoadDefaultConfig()
-    self.Config.Settings = self.Config.Settings or {}
-    self.Config.Settings.LogUsage = self.Config.Settings.LogUsage or "true"
-    self.Config.Settings.ShowMessages = self.Config.Settings.ShowMessages or "true"
-
     self.Config.Messages = self.Config.Messages or {}
-    self.Config.Messages.BoxUnlocked = self.Config.Messages.BoxUnlocked or "<size=20>Box unlocked with master key!</size>"
-    self.Config.Messages.DoorUnlocked = self.Config.Messages.DoorUnlocked or "<size=20>Door unlocked with master key!</size>"
-    self.Config.Messages.CupboardUnlocked = self.Config.Messages.CupboardUnlocked or "<size=20>Cupboard unlocked with master key!</size>"
-    self.Config.Messages.MasterKeyUsed = self.Config.Messages.MasterKeyUsed or "{player} ({steamid}) used master key at {position}"
+    messages = self.Config.Messages
+    messages.BoxUnlocked = messages.BoxUnlocked or "<size=20>Box unlocked with master key!</size>"
+    messages.DoorUnlocked = messages.DoorUnlocked or "<size=20>Door unlocked with master key!</size>"
+    messages.CupboardUnlocked = messages.CupboardUnlocked or "<size=20>Cupboard unlocked with master key!</size>"
+    messages.MasterKeyUsed = messages.MasterKeyUsed or "{player} ({steamid}) used master key at {position}"
+
+    self.Config.Settings = self.Config.Settings or {}
+    settings = self.Config.Settings
+    settings.LogUsage = settings.LogUsage or "true"
+    settings.ShowMessages = settings.ShowMessages or "true"
 
     self:SaveConfig()
 end
@@ -48,16 +51,16 @@ function PLUGIN:Init()
     permission.RegisterPermission("masterkey.cupboards", self.Plugin)
 end
 
-function PLUGIN:CanOpenDoor(player, lock)
+function PLUGIN:CanUseDoor(player, lock)
     local entity = lock.parentEntity:Get(true):LookupPrefabName()
     local steamId = rust.UserIDFromPlayer(player)
 
     if entity == "items/woodbox_deployed" then
         if HasPermission(steamId, "masterkey.all") or HasPermission(steamId, "masterkey.boxes") then
-            if self.Config.Settings.ShowMessages == "true" then
-                rust.SendChatMessage(player, self.Config.Messages.BoxUnlocked)
+            if settings.ShowMessages == "true" then
+                rust.SendChatMessage(player, messages.BoxUnlocked)
             end
-            Log(self, player, self.Config.Messages.MasterKeyUsed, steamId)
+            Log(self, player, messages.MasterKeyUsed, steamId)
 
             return true
         end
@@ -65,10 +68,10 @@ function PLUGIN:CanOpenDoor(player, lock)
 
     if entity == "build/door.hinged" then
         if HasPermission(steamId, "masterkey.all") or HasPermission(steamId, "masterkey.doors") then
-            if self.Config.Settings.ShowMessages == "true" then
-                rust.SendChatMessage(player, self.Config.Messages.DoorUnlocked)
+            if settings.ShowMessages == "true" then
+                rust.SendChatMessage(player, messages.DoorUnlocked)
             end
-            Log(self, player, self.Config.Messages.MasterKeyUsed, steamId)
+            Log(self, player, messages.MasterKeyUsed, steamId)
 
             return true
         end
@@ -82,10 +85,10 @@ function PLUGIN:OnEntityEnter(trigger, entity)
 
         if trigger:GetType() == global.BuildPrivilegeTrigger._type then
             if HasPermission(steamId, "masterkey.all") or HasPermission(steamId, "masterkey.cupboards") then
-                if self.Config.Settings.ShowMessages == "true" then
-                    rust.SendChatMessage(player, self.Config.Messages.CupboardUnlocked)
+                if settings.ShowMessages == "true" then
+                    rust.SendChatMessage(player, messages.CupboardUnlocked)
                 end
-                Log(self, player, self.Config.Messages.MasterKeyUsed, steamId)
+                Log(self, player, messages.MasterKeyUsed, steamId)
 
                 timer.Once(0.1, function()
                     player:SetPlayerFlag(global.BasePlayer.PlayerFlags.HasBuildingPrivilege, true)
