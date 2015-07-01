@@ -3,7 +3,7 @@ PLUGIN.Version = V(0, 1, 2)
 PLUGIN.Description = "Allows players with permission to get a well-rested sleep."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1156/"
-PLUGIN.Resource = 1156
+PLUGIN.ResourceId = 1156
 
 local debug = false
 

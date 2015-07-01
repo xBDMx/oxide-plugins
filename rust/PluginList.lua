@@ -15,6 +15,8 @@ function PLUGIN:LoadDefaultConfig()
     messages = self.Config.Messages
     messages.InstalledPlugins = messages.InstalledPlugins or "<size=18><b><color=#FAB269>Installed plugin(s)</color></b></size>:"
     messages.NoPluginFound = messages.NoPluginFound or "No plugin found with that name!"
+    messages.PluginDesc = messages.PluginDesc or "\n<size=15>{description}</size>"
+    messages.PluginTitle = messages.PluginTitle or "<size=18><b><color=#FAB269>{title} v{version}</color></b></size>"
 
     self:SaveConfig()
 end
@@ -54,10 +56,10 @@ function PLUGIN:ListPlugins(player, cmd, args)
 
         if not plugin then SendChatMessage(player, messages.NoPluginFound) return end
 
-        local message = "<size=18><b><color=#FAB269>" .. plugin.Title .. " v" .. plugin.Version:ToString() .. "</color></b></size>"
-        if plugin.Description then message = message .. "\n<size=15>" .. plugin.Description .. "</size>" end
+        local message = messages.PluginTitle:gsub("{title}", plugin.Title):gsub("{version}", plugin.Version:ToString())
+        if plugin.Description then message = message .. messages.PluginDesc:gsub("{description}", plugin.Description) end
         if plugin.Object.ResourceId and plugin.Object.ResourceId ~= "" and tonumber(plugin.Object.ResourceId) ~= 0 then
-            message = message .. "\nhttp://oxidemod.org/plugins/" .. plugin.Object.ResourceId .. "/"
+            message = message .. " http://oxidemod.org/plugins/" .. plugin.Object.ResourceId .. "/"
         end
 
         SendChatMessage(player, message)
