@@ -8,8 +8,6 @@ PLUGIN.ResourceId = 1163
 local debug = false
 local game = "rok"
 
-local server = covalence.Server
-
 --[[ Do NOT edit the config here, instead edit Updater.json in oxide/config ! ]]
 
 local messages, settings
@@ -50,6 +48,8 @@ local function HasPermission(steamId, perm)
     if permission.UserHasPermission(steamId, perm) then return true end
     return false
 end
+
+local server = covalence.Server
 
 local function SendChatMessage(player, message)
     if game == "rust" then player.ConnectedPlayer:SendChatMessage(message) return end

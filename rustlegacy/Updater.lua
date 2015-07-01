@@ -2,11 +2,13 @@ PLUGIN.Title = "Updater"
 PLUGIN.Version = V(0, 4, 3)
 PLUGIN.Description = "Automatic update checking and notifications for plugins."
 PLUGIN.Author = "Wulf / Luke Spragg"
-PLUGIN.Url = "http://oxidemod.org/plugins/681/"
-PLUGIN.ResourceId = 681
+PLUGIN.Url = "http://oxidemod.org/plugins/380/"
+PLUGIN.ResourceId = 380
 
 local debug = false
-local game = "rust"
+local game = "legacy"
+
+local server = covalence.Server
 
 --[[ Do NOT edit the config here, instead edit Updater.json in oxide/config ! ]]
 
@@ -48,8 +50,6 @@ local function HasPermission(steamId, perm)
     if permission.UserHasPermission(steamId, perm) then return true end
     return false
 end
-
-local server = covalence.Server
 
 local function SendChatMessage(player, message)
     if game == "rust" then player.ConnectedPlayer:SendChatMessage(message) return end
@@ -114,7 +114,7 @@ function PLUGIN:OnServerInitialized()
     end
 end
 
-Command{ "update" }
+--Command{ "update" }
 function PLUGIN:ChatCommand(player, cmd)
     if player and not HasPermission(GetSteamId(player), "update.check") then
         SendChatMessage(player, messages.NoPermission)
@@ -124,7 +124,7 @@ function PLUGIN:ChatCommand(player, cmd)
     self:UpdateCheck(player)
 end
 
-Command{ "global.update" }
+--Command{ "global.update" }
 function PLUGIN:ConsoleCommand(args)
     local player
     if args.connection then player = args.connection.player end
