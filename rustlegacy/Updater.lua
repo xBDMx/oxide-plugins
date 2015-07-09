@@ -1,5 +1,5 @@
 PLUGIN.Title = "Updater"
-PLUGIN.Version = V(0, 4, 3)
+PLUGIN.Version = V(0, 4, 4)
 PLUGIN.Description = "Automatic update checking and notifications for plugins."
 PLUGIN.Author = "Wulf / Luke Spragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/380/"
@@ -39,8 +39,11 @@ end
 
 local function Print(self, message) print("[" .. self.Title .. "] " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -159,7 +162,7 @@ function PLUGIN:UpdateCheck(player)
 
                 if code == 200 and response ~= "" then
                     if version < response then
-                        local message = ParseMessage(messages.Outdated, { plugin = title, current = version, latest = response })
+                        local message = ParseString(messages.Outdated, { plugin = title, current = version, latest = response })
                         Print(self, message)
                         Print(self, "- http://oxidemod.org/plugins/" .. resourceId .. "/")
                         if player then
@@ -167,19 +170,19 @@ function PLUGIN:UpdateCheck(player)
                             SendChatMessage(player, "- http://oxidemod.org/plugins/" .. resourceId .. "/")
                         end
 
-                        local message = ParseMessage(messages.Outdated, { plugin = "<b>" .. title .."</b>", current = version, latest = response })
+                        local message = ParseString(messages.Outdated, { plugin = "<b>" .. title .."</b>", current = version, latest = response })
                         emailMessage = emailMessage .. "<br/>" .. message
                         pushMessage = pushMessage .. "\n" .. message
 
                         outdated = outdated + 1
 
                     elseif settings.ShowUpToDate == "true" then
-                        local message = ParseMessage(messages.UpToDate, { plugin = title, version = version })
+                        local message = ParseString(messages.UpToDate, { plugin = title, version = version })
                         Print(self, message)
                         if player then SendChatMessage(player, message) end
                     end
                 else
-                    Print(self, ParseMessage(messages.CheckFailed, { plugin = title }))
+                    Print(self, ParseString(messages.CheckFailed, { plugin = title }))
                     if player then SendChatMessage(player, message) end
                 end
 
@@ -192,7 +195,7 @@ function PLUGIN:UpdateCheck(player)
                     Print(self, "### " .. messages.CheckFinished)
                     if player then SendChatMessage(player, "### " .. messages.CheckFinished) end
 
-                    local subject = ParseMessage(messages.NotifySubject, { count = outdated, hostname = GetHostname() })
+                    local subject = ParseString(messages.NotifySubject, { count = outdated, hostname = GetHostname() })
                     if settings.EmailNotifications == "true" and outdated > 0 then EmailMessage(subject, emailMessage) end
                     if settings.PushNotifications == "true" and outdated > 0 then PushMessage(subject, pushMessage) end
                 end
@@ -202,7 +205,7 @@ function PLUGIN:UpdateCheck(player)
         end
     end
 
-    Print(self, ParseMessage(messages.Supported, { count = supported }))
+    Print(self, ParseString(messages.Supported, { count = supported }))
 end
 
 function PLUGIN:SendHelpText(player)
