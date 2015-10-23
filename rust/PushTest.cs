@@ -2,14 +2,14 @@ using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
-    [Info("Push Test", "Wulf / Luke Spragg", 0.1)]
+    [Info("Push Test", "Wulf/lukespragg", 0.1)]
     [Description("Push API test plugin.")]
+
     class PushTest : RustPlugin
     {
         [PluginReference]
         Plugin PushAPI;
 
-        [ChatCommand("ptest")]
         [ConsoleCommand("global.ptest")]
         void SendTest()
         {

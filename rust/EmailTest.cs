@@ -2,14 +2,14 @@ using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
-    [Info("Email Test", "Wulf / Luke Spragg", 0.1)]
+    [Info("Email Test", "Wulf/lukespragg", 0.1)]
     [Description("Email API test plugin.")]
+
     class EmailTest : RustPlugin
     {
         [PluginReference]
         Plugin EmailAPI;
 
-        [ChatCommand("etest")]
         [ConsoleCommand("global.etest")]
         void SendTest()
         {

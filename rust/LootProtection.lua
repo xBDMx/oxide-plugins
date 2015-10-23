@@ -1,7 +1,7 @@
 PLUGIN.Title = "Loot Protection"
 PLUGIN.Version = V(0, 2, 1)
 PLUGIN.Description = "Prevents players with permission from being looted by other players."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1150/"
 PLUGIN.ResourceId = 1150
 

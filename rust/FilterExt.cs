@@ -1,26 +1,32 @@
-// For internal use only!
-
 using System.Linq;
-using System.Reflection;
+
 using Oxide.Game.Rust;
 
 namespace Oxide.Plugins
 {
-    [Info("Filter Extension", "Wulfspider", 0.1)]
+    [Info("FilterExt", "Wulf/lukespragg", 0.1)]
+    [Description("Extension to Oxide's filter for removing unwanted messages.")]
+
     class FilterExt : RustPlugin
     {
         void Loaded()
         {
-            var filter = typeof(RustExtension).GetField("Filter", BindingFlags.Static | BindingFlags.NonPublic);
-            var filterItems = (string[])filter.GetValue(null);
-            var filterList = filterItems.ToList();
-            filterList.Add("took 00:");
-            filterList.Add("Enforcing SpawnPopulation Limits");
-            filterList.Add("but max allowed is");
-            filterList.Add("- deleting");
-            filterList.Add("Reporting Performance Data");
-            filterList.Add("ERROR building certificate chain");
-            filter.SetValue(null, filterList.ToArray());
+            // Get existing filter list
+            var filter = RustExtension.Filter.ToList();
+
+            // Add messages to filter
+            filter.Add("- deleting");
+            filter.Add("ERROR building certificate chain");
+            filter.Add("Enforcing SpawnPopulation Limits");
+            filter.Add("Reporting Performance Data");
+            filter.Add("Saved ");
+            filter.Add("Saving complete");
+            filter.Add("TimeWarning:");
+            filter.Add("but max allowed is");
+            filter.Add("[event] assets/bundled/prefabs/");
+
+            // Update filter list
+            RustExtension.Filter = filter.ToArray();
         }
     }
 }

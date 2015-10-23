@@ -1,7 +1,7 @@
 PLUGIN.Title = "Email API"
 PLUGIN.Version = V(0, 3, 2)
 PLUGIN.Description = "API for sending email messages via supported transactional email services."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1171/"
 PLUGIN.ResourceId = 1171
 

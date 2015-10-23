@@ -1,7 +1,7 @@
 PLUGIN.Title = "Push API"
 PLUGIN.Version = V(0, 2, 0)
 PLUGIN.Description = "API for sending messages via mobile notification services."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1166/"
 PLUGIN.ResourceId = 1166
 

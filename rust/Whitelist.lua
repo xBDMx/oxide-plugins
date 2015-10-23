@@ -1,7 +1,7 @@
 PLUGIN.Title = "Whitelist"
 PLUGIN.Version = V(0, 3, 2)
 PLUGIN.Description = "Restricts access to your server to whitelisted players only."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/654/"
 PLUGIN.ResourceId = 654
 
@@ -45,8 +45,11 @@ end
 
 local function Print(self, message) print("[" .. self.Title .. "] " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -125,14 +128,14 @@ function PLUGIN:Whitelist(action, player, target)
                 whitelist[targetSteamId] = targetName
                 datafile.SaveDataTable("Whitelist")
 
-                local message = ParseMessage(messages.PlayerAdded, { target = target, player = target })
+                local message = ParseString(messages.PlayerAdded, { target = target, player = target })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
                     Print(self, message)
                 end
             else
-                local message = ParseMessage(messages.AlreadyAdded, { target = target, player = target })
+                local message = ParseString(messages.AlreadyAdded, { target = target, player = target })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
@@ -155,14 +158,14 @@ function PLUGIN:Whitelist(action, player, target)
                 whitelist[targetSteamId] = nil
                 datafile.SaveDataTable("Whitelist")
 
-                local message = ParseMessage(messages.PlayerRemoved, { target = target, player = target })
+                local message = ParseString(messages.PlayerRemoved, { target = target, player = target })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
                     Print(self, message)
                 end
             else
-                local message = ParseMessage(messages.NotWhitelisted, { target = target, player = target })
+                local message = ParseString(messages.NotWhitelisted, { target = target, player = target })
                 if player then
                     rust.SendChatMessage(player, message)
                 else

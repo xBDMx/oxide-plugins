@@ -1,7 +1,7 @@
 PLUGIN.Title = "Auth Level"
 PLUGIN.Version = V(0, 2, 4)
 PLUGIN.Description = "Add/remove players as owner/moderator/player via command."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/702/"
 PLUGIN.ResourceId = 702
 
@@ -36,8 +36,11 @@ end
 
 local function Print(self, message) print("[" .. self.Title .. "] " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -47,16 +50,16 @@ local function HasPermission(steamId, perm)
 end
 
 local function FindPlayer(self, player, target)
-    local targetPlayer = global.BasePlayer.Find(target)
-    if not targetPlayer then
-        if not player then
-            Print(self, messages.InvalidTarget)
-        else
+    local target = global.BasePlayer.Find(target)
+    if not target then
+        if player then
             rust.SendChatMessage(player, messages.InvalidTarget)
+        else
+            Print(self, messages.InvalidTarget)
         end
         return
     end
-    return targetPlayer
+    return target
 end
 
 local function AuthLevel(targetPlayer, authLevel)
@@ -101,7 +104,7 @@ function PLUGIN:ChatCommand(player, cmd, args)
 
     AuthLevel(targetPlayer, authLevel)
 
-    local message = ParseMessage(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
+    local message = ParseString(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
     rust.SendChatMessage(player, message)
 end
 
@@ -137,7 +140,7 @@ function PLUGIN:ConsoleCommand(args)
 
     AuthLevel(targetPlayer, authLevel)
 
-    local message = ParseMessage(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
+    local message = ParseString(messages.AuthLevelSet, { level = authLevel, player = targetPlayer.displayName })
     if player then args:ReplyWith(message) else print(message) end
 end
 

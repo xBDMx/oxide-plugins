@@ -1,7 +1,7 @@
 PLUGIN.Title = "Friendly Fire"
 PLUGIN.Version = V(1, 5, 4)
 PLUGIN.Description = "Toggle friendly fire on/off for friends."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/687/"
 PLUGIN.ResourceId = 687
 
@@ -29,8 +29,10 @@ end
 
 function PLUGIN:Init()
     self:LoadDefaultConfig()
+
     command.AddChatCommand(settings.Command, self.Plugin, "ChatCommand")
     command.AddConsoleCommand("global." .. settings.Command, self.Plugin, "ConsoleCommand")
+
     permission.RegisterPermission("ff.toggle", self.Plugin)
 end
 
@@ -53,23 +55,25 @@ end
 
 function PLUGIN:OnPlayerAttack(attacker, hitInfo)
     if friendsApi and settings.FriendlyFire == "false" then
+        if not hitInfo.HitEntity then return end
+        if not hitInfo.HitEntity:ToPlayer() then return end
+
         if debug then Print(self, "HitEntity: " .. tostring(hitInfo.HitEntity)) end
 
-        if hitInfo.HitEntity then
-            if hitInfo.HitEntity:ToPlayer() then
-                local targetPlayer = hitInfo.HitEntity
-                local targetSteamId = rust.UserIDFromPlayer(targetPlayer)
-                local attackerSteamId = rust.UserIDFromPlayer(attacker)
-                local hasFriend = friendsApi:CallHook("HasFriend", attackerSteamId, targetSteamId)
+        local targetPlayer = hitInfo.HitEntity
+        local targetSteamId = rust.UserIDFromPlayer(targetPlayer)
+        local attackerSteamId = rust.UserIDFromPlayer(attacker)
 
-                if debug then Print(self, "hasFriend: " .. tostring(hasFriend)) end
+        if targetSteamId and attackerSteamId then
+            local hasFriend = friendsApi:CallHook("HasFriend", attackerSteamId, targetSteamId)
 
-                if hasFriend then
-                    rust.SendChatMessage(attacker, messages.CantHurtFriend)
-                    hitInfo.damageTypes = new(Rust.DamageTypeList._type, nil)
-                    hitInfo.HitMaterial = 0
-                    return true
-                end
+            if debug then Print(self, "hasFriend: " .. tostring(hasFriend)) end
+
+            if hasFriend then
+                rust.SendChatMessage(attacker, messages.CantHurtFriend)
+                hitInfo.damageTypes = new(Rust.DamageTypeList._type, nil)
+                hitInfo.HitMaterial = 0
+                return true
             end
         end
     end

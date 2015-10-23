@@ -1,7 +1,7 @@
 PLUGIN.Title = "Plugin List"
 PLUGIN.Version = V(0, 1, 1)
 PLUGIN.Description = "Shows installed plugins and plugin information."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1168/"
 PLUGIN.ResourceId = 1168
 

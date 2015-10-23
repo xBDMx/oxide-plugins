@@ -1,11 +1,14 @@
 PLUGIN.Title = "Name Change"
-PLUGIN.Version = V(0, 1, 4)
+PLUGIN.Version = V(0, 1, 5)
 PLUGIN.Description = "Instantly rename any player and keep it that way."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1184/"
 PLUGIN.ResourceId = 1184
 
 local debug = false
+
+-- TODO:
+---- Find way to get original Steam name instead of saving previously used
 
 --[[ Do NOT edit the config here, instead edit NameChange.json in oxide/config ! ]]
 
@@ -31,18 +34,26 @@ function PLUGIN:LoadDefaultConfig()
 end
 
 local names
+local displayName = global.BasePlayer._type:GetField("_displayName", rust.PrivateBindingFlag()) 
+
 function PLUGIN:Init()
     self:LoadDefaultConfig()
+
     names = datafile.GetDataTable("NameChange") or {}
+
     command.AddChatCommand(settings.Command, self.Plugin, "ChatCommand")
     command.AddConsoleCommand("global." .. settings.Command, self.Plugin, "ConsoleCommand")
+
     permission.RegisterPermission("rename.players", self.Plugin)
 end
 
 local function Print(self, message) print("[" .. self.Title .. "] " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -99,12 +110,12 @@ function PLUGIN:Rename(player, target, arg)
         if debug then Print(self, oldName .. " (" .. steamId .. ")") end
 
         if names[steamId] and arg == "reset" then
-            target.displayName = names[steamId].Original
+            displayName:SetValue(target, names[steamId].Original)
             names[steamId] = nil
             datafile.SaveDataTable("NameChange")
 
-            local message = ParseMessage(messages.PlayerReset, { player = oldName, name = target.displayName })
-            if player and player ~= target then
+            local message = ParseString(messages.PlayerReset, { player = oldName, name = target.displayName })
+            if player then
                 rust.SendChatMessage(player, message)
             else
                 Print(self, message)
@@ -114,16 +125,16 @@ function PLUGIN:Rename(player, target, arg)
             names[steamId].Original = target.displayName
             names[steamId].Rename = arg
             datafile.SaveDataTable("NameChange")
-            target.displayName = arg
+            displayName:SetValue(target, arg)
 
             if settings.NotifyPlayer == "true" then
-                local message = ParseMessage(messages.YouRenamed, { player = source, name = arg })
-                if player and player ~= target then
+                local message = ParseString(messages.YouRenamed, { player = source, name = arg })
+                if player then
                     rust.SendChatMessage(target, message)
                 end
             end
 
-            local message = ParseMessage(messages.PlayerRenamed, { player = oldName, name = arg })
+            local message = ParseString(messages.PlayerRenamed, { player = oldName, name = arg })
             if player and player ~= target then
                 rust.SendChatMessage(player, message)
             else

@@ -1,7 +1,7 @@
 PLUGIN.Title = "PvE Switch"
 PLUGIN.Version = V(1, 2, 0)
 PLUGIN.Description = "Allows you to switch between PvE and PvP modes."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/694/"
 PLUGIN.ResourceId = 694
 

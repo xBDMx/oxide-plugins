@@ -1,7 +1,7 @@
 PLUGIN.Title = "Updater"
-PLUGIN.Version = V(0, 4, 4)
+PLUGIN.Version = V(0, 4, 6)
 PLUGIN.Description = "Automatic update checking and notifications for plugins."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/380/"
 PLUGIN.ResourceId = 380
 
@@ -41,7 +41,7 @@ local function Print(self, message) print("[" .. self.Title .. "] " .. message) 
 
 local function ParseString(message, values)
     for key, value in pairs(values) do
-        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%0")
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
         message = message:gsub("{" .. key .. "}", value)
     end
     return message
@@ -151,9 +151,9 @@ function PLUGIN:UpdateCheck(player)
     for i = 0, pluginList.Length - 1 do
         local title = pluginList[i].Title
         local version = pluginList[i].Version:ToString()
-        local resourceId = tostring(pluginList[i].Object.ResourceId)
+        local resourceId = tostring(pluginList[i].ResourceId)
 
-        if resourceId and resourceId ~= "" and tonumber(resourceId) ~= 0 and resourceId:match("%d") then
+        if resourceId and resourceId ~= "" and resourceId ~= "0" and resourceId:match("%d") then
             supported = supported + 1
 
             local url = "https://dev.wulf.im/oxide/" .. resourceId

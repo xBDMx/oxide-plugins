@@ -1,7 +1,7 @@
 PLUGIN.Title = "Reserved"
 PLUGIN.Version = V(0, 2, 1)
 PLUGIN.Description = "Reserves a number of slots so that reserved players can connect."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/674/"
 PLUGIN.ResourceId = 674
 
@@ -40,8 +40,11 @@ end
 
 local function Print(self, message) print("[" .. self.Title .. "] " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -65,8 +68,10 @@ end
 
 function PLUGIN:Init()
     self:LoadDefaultConfig()
+
     command.AddChatCommand(settings.Command, self.Plugin, "ChatCommand")
     command.AddConsoleCommand("global." .. settings.Command, self.Plugin, "ConsoleCommand")
+
     permission.RegisterPermission("reserved.manage", self.Plugin)
     permission.RegisterPermission("reserved.bypass", self.Plugin)
 end
@@ -112,14 +117,14 @@ function PLUGIN:Reserve(player, action, arg)
             if not HasPermission(steamId, "reserved.bypass") then
                 rust.RunServerCommand("oxide.grant user " .. steamId .. " reserved.bypass")
 
-                local message = ParseMessage(messages.PlayerAdded, { player = player.displayName, steamid = steamId })
+                local message = ParseString(messages.PlayerAdded, { player = player.displayName, steamid = steamId })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
                     Print(self, message)
                 end
             else
-                local message = ParseMessage(messages.AlreadyAdded, { player = player.displayName, steamid = steamId })
+                local message = ParseString(messages.AlreadyAdded, { player = player.displayName, steamid = steamId })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
@@ -138,14 +143,14 @@ function PLUGIN:Reserve(player, action, arg)
             if HasPermission(steamId, "reserved.bypass") then
                 rust.RunServerCommand("oxide.revoke user " .. steamId .. " reserved.bypass")
 
-                local message = ParseMessage(messages.PlayerRemoved, { player = player.displayName, steamid = steamId })
+                local message = ParseString(messages.PlayerRemoved, { player = player.displayName, steamid = steamId })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
                     Print(self, message)
                 end
             else
-                local message = ParseMessage(messages.NotReserved, { player = player.displayName, steamid = steamId })
+                local message = ParseString(messages.NotReserved, { player = player.displayName, steamid = steamId })
                 if player then
                     rust.SendChatMessage(player, message)
                 else
@@ -159,7 +164,7 @@ function PLUGIN:Reserve(player, action, arg)
     if action == "slots" then
         settings.ReservedSlots = tonumber(arg)
 
-        local message = ParseMessage(messages.ReservedSlots, { number = arg })
+        local message = ParseString(messages.ReservedSlots, { number = arg })
         if player then
             rust.SendChatMessage(player, message)
         else

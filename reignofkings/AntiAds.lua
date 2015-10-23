@@ -1,7 +1,7 @@
 PLUGIN.Title = "Anti-Advertising"
 PLUGIN.Version = V(2, 0, 1)
 PLUGIN.Description = "Kicks or bans players who try to advertise there servers."
-PLUGIN.Author = "Wulfspider"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/1047/"
 PLUGIN.ResourceId = 1047
 
@@ -35,8 +35,11 @@ end
 
 local function Print(self, message) print(self.Title .. " > " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -66,17 +69,17 @@ local function Ban(self, game, player)
 
     if game == "rust" then
         rust.RunServerCommand("ban", player.displayName, reason)
-        rust.BroadcastChat(ParseMessage(banned, { player = player.displayName }))
+        rust.BroadcastChat(ParseString(banned, { player = player.displayName }))
     elseif game == "legacy" then
         player:Ban()
-        rust.BroadcastChat(ParseMessage(banned, { player = player.displayName }))
+        rust.BroadcastChat(ParseString(banned, { player = player.displayName }))
     elseif game == "rok" then
         local message = util.TableToArray({ player, reason })
         CodeHatch.Engine.Networking.Server.Ban.methodarray[1]:Invoke(nil, message)
-        rok.BroadcastChat(ParseMessage(banned, { player = player.Name }))
+        rok.BroadcastChat(ParseString(banned, { player = player.Name }))
     elseif game == "7dtd" then
         --global.AdminTools.AddBan(steamId, ownerId, datetime, reason, true)
-        sdtd.BroadcastChat(ParseMessage(banned, { player = player }))
+        sdtd.BroadcastChat(ParseString(banned, { player = player }))
     end
 end
 
@@ -86,17 +89,17 @@ local function Kick(self, game, player)
 
     if game == "rust" then
         Network.Net.sv:Kick(player.net.connection, reason)
-        rust.BroadcastChat(ParseMessage(kicked, { player = player.displayName }))
+        rust.BroadcastChat(ParseString(kicked, { player = player.displayName }))
     elseif game == "legacy" then
         player:Kick(global.NetError.Facepunch_Kick_RCON, true)
-        rust.BroadcastChat(ParseMessage(kicked, { player = player.displayName }))
+        rust.BroadcastChat(ParseString(kicked, { player = player.displayName }))
     elseif game == "rok" then
         local message = util.TableToArray({ player, reason })
         CodeHatch.Engine.Networking.Server.Kick.methodarray[2]:Invoke(nil, message)
-        rok.BroadcastChat(ParseMessage(kicked, { player = player.Name }))
+        rok.BroadcastChat(ParseString(kicked, { player = player.Name }))
     elseif game == "7dtd" then
         --global.StaticDirectories.KickPlayerForClientInfo(clientinfo, reason, monobehaviour)
-        sdtd.BroadcastChat(ParseMessage(kicked, { player = player }))
+        sdtd.BroadcastChat(ParseString(kicked, { player = player }))
     end
 end
 
@@ -159,7 +162,6 @@ end
 if game == "rok" then
     function PLUGIN:OnPlayerChat(event)
         if not event then return end
-        if event.SenderId == "9999999999" then return end
 
         local player = event.Player
         local message = event.Message

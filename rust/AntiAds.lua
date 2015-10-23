@@ -1,11 +1,13 @@
 PLUGIN.Title = "Anti-Advertising"
-PLUGIN.Version = V(2, 0, 0)
+PLUGIN.Version = V(2, 0, 1)
 PLUGIN.Description = "Kicks or bans players who try to advertise there servers."
-PLUGIN.Author = "Wulfspider"
-PLUGIN.Url = "http://oxidemod.org/plugins/476/"
-PLUGIN.ResourceId = 476
+PLUGIN.Author = "Wulf/lukespragg"
+PLUGIN.Url = "http://oxidemod.org/plugins/1046/"
+PLUGIN.ResourceId = 1046
 
 local game = "rust"
+
+--[[ Do NOT edit the config here, instead edit AntiAds.json in oxide/config ! ]]
 
 function PLUGIN:LoadDefaultConfig()
     self.Config.Settings = self.Config.Settings or {}
@@ -33,8 +35,11 @@ end
 
 local function Print(self, message) print(self.Title .. " > " .. message) end
 
-local function ParseMessage(message, values)
-    for key, value in pairs(values) do message = message:gsub("{" .. key .. "}", value) end
+local function ParseString(message, values)
+    for key, value in pairs(values) do
+        value = tostring(value):gsub("[%-?*+%[%]%(%)%%]", "%%%%%0")
+        message = message:gsub("{" .. key .. "}", value)
+    end
     return message
 end
 
@@ -51,21 +56,10 @@ end
 local function SendMessage(self, game, player)
     local message = self.Config.Messages.NoAdvertising
 
-    if game == "rust" then
-        rust.SendChatMessage(player, message)
-        return
-    end
-    if game == "legacy" then
-        rust.Notice(player, message, "", 30)
-        return
-    end
-    if game == "rok" then
-        SendChatMessage(player, player.Name, message)
-        return
-    end
-    if game == "7dtd" then
-        sevendays.SendChatMessage(player, message)
-        return
+    if game == "rust" then rust.SendChatMessage(player, message)
+    elseif game == "legacy" then rust.Notice(player, message, "", 30)
+    elseif game == "rok" then rok.SendChatMessage(player, player.Name, message)
+    elseif game == "7dtd" then sdtd.SendChatMessage(player, message)
     end
 end
 
@@ -75,28 +69,17 @@ local function Ban(self, game, player)
 
     if game == "rust" then
         rust.RunServerCommand("ban", player.displayName, reason)
-        local message = ParseMessage(banned, { player = player.displayName })
-        rust.BroadcastChat(message)
-        return
-    end
-    if game == "legacy" then
+        rust.BroadcastChat(ParseString(banned, { player = player.displayName }))
+    elseif game == "legacy" then
         player:Ban()
-        local message = ParseMessage(banned, { player = player.displayName })
-        rust.BroadcastChat(message)
-        return
-    end
-    if game == "rok" then
+        rust.BroadcastChat(ParseString(banned, { player = player.displayName }))
+    elseif game == "rok" then
         local message = util.TableToArray({ player, reason })
         CodeHatch.Engine.Networking.Server.Ban.methodarray[1]:Invoke(nil, message)
-        local message = ParseMessage(banned, { player = player.Name })
-        rok.BroadcastChat(message)
-        return
-    end
-    if game == "7dtd" then
+        rok.BroadcastChat(ParseString(banned, { player = player.Name }))
+    elseif game == "7dtd" then
         --global.AdminTools.AddBan(steamId, ownerId, datetime, reason, true)
-        local message = ParseMessage(banned, { player = player })
-        sevendays.BroadcastChat(message)
-        return
+        sdtd.BroadcastChat(ParseString(banned, { player = player }))
     end
 end
 
@@ -106,36 +89,23 @@ local function Kick(self, game, player)
 
     if game == "rust" then
         Network.Net.sv:Kick(player.net.connection, reason)
-        local message = ParseMessage(kicked, { player = player.displayName })
-        rust.BroadcastChat(message)
-        return
-    end
-    if game == "legacy" then
+        rust.BroadcastChat(ParseString(kicked, { player = player.displayName }))
+    elseif game == "legacy" then
         player:Kick(global.NetError.Facepunch_Kick_RCON, true)
-        local message = ParseMessage(kicked, { player = player.displayName })
-        rust.BroadcastChat(message)
-        return
-    end
-    if game == "rok" then
+        rust.BroadcastChat(ParseString(kicked, { player = player.displayName }))
+    elseif game == "rok" then
         local message = util.TableToArray({ player, reason })
         CodeHatch.Engine.Networking.Server.Kick.methodarray[2]:Invoke(nil, message)
-        local message = ParseMessage(kicked, { player = player.Name })
-        rok.BroadcastChat(message)
-        return
-    end
-    if game == "7dtd" then
+        rok.BroadcastChat(ParseString(kicked, { player = player.Name }))
+    elseif game == "7dtd" then
         --global.StaticDirectories.KickPlayerForClientInfo(clientinfo, reason, monobehaviour)
-        local message = ParseMessage(kicked, { player = player })
-        sevendays.BroadcastChat(message)
-        return
+        sdtd.BroadcastChat(ParseString(kicked, { player = player }))
     end
 end
 
 local function Punish(self, game, player)
-    if self.Config.Settings.Ban == "true" then
-        Ban(self, game, player)
-    elseif self.Config.Settings.Kick == "true" then
-        Kick(self, game, player)
+    if self.Config.Settings.Ban == "true" then Ban(self, game, player)
+    elseif self.Config.Settings.Kick == "true" then Kick(self, game, player)
     end
 end
 
@@ -156,8 +126,10 @@ if game == "rust" then
         if not MatchAddress(self, message) then return end
         if not AllowedServer(self, address) then
             if HasPermission(steamId) then return end
+
             SendMessage(self, game, player)
             Punish(self, game, player)
+
             return false
         end
     end
@@ -176,8 +148,10 @@ if game == "legacy" then
         if not MatchAddress(self, message) then return end
         if not AllowedServer(self, address) then
             if HasPermission(steamId) then return end
+
             SendMessage(self, game, player)
             Punish(self, game, player)
+
             return false
         end
     end
@@ -188,7 +162,6 @@ end
 if game == "rok" then
     function PLUGIN:OnPlayerChat(event)
         if not event then return end
-        if event.SenderId == "9999999999" then return end
 
         local player = event.Player
         local message = event.Message
@@ -200,6 +173,7 @@ if game == "rok" then
         if not MatchAddress(self, message) then return end
         if not AllowedServer(self, address) then
             if HasPermission(steamId) then return end
+
             Punish(self, game, player)
             event:Cancel()
         end
@@ -213,13 +187,15 @@ if game == "7dtd" then
         if not message or message == "" or message:sub(1, 1) == "/" then return end
         if not name then return end
 
-        --local steamId = sevendays.IdFromPlayer(name)
+        --local steamId = sdtd.IdFromPlayer(name)
 
         if not MatchAddress(self, message) then return end
         if not AllowedServer(self, address) then
             --if HasPermission(steamId) then return end
+
             SendMessage(self, game, name)
             Punish(self, game, name)
+
             return false
         end
     end

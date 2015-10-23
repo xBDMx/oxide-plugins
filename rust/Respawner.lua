@@ -1,7 +1,7 @@
 PLUGIN.Title = "Respawner"
 PLUGIN.Version = V(0, 2, 2)
 PLUGIN.Description = "Automatically respawns players after they die."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/669/"
 PLUGIN.ResourceId = 669
 

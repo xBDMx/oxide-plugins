@@ -1,7 +1,7 @@
 PLUGIN.Title = "AFK Kick"
 PLUGIN.Version = V(0, 2, 0)
 PLUGIN.Description = "Kicks players that are AFK (away from keyboard) for too long."
-PLUGIN.Author = "Wulf / Luke Spragg"
+PLUGIN.Author = "Wulf/lukespragg"
 PLUGIN.Url = "http://oxidemod.org/plugins/765/"
 PLUGIN.ResourceId = 765
 
