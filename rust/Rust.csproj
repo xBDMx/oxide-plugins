@@ -37,6 +37,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\..\Servers\Game\Rust\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="EasyAntiCheat.Server">
+      <HintPath>..\..\..\..\..\Servers\Game\Rust\RustDedicated_Data\Managed\EasyAntiCheat.Server.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\Servers\Game\Rust\RustDedicated_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -69,17 +72,41 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AntiLockPick.cs" />
+    <Compile Include="AutoDoors.cs" />
+    <Compile Include="AutoFurnaces.cs" />
+    <Compile Include="DeathSign.cs" />
+    <Compile Include="HeliInbound.cs" />
+    <Compile Include="HideAndSeek.cs" />
+    <Compile Include="HomeSigns.cs" />
+    <Compile Include="MoneyTime.cs" />
+    <Compile Include="NoCold.cs" />
+    <Compile Include="NoEscape.cs" />
+    <Compile Include="NoSleepers.cs" />
+    <Compile Include="NoSteam.cs" />
+    <Compile Include="Parachute.cs" />
+    <Compile Include="Possession.cs" />
+    <Compile Include="QuarryFactory.cs" />
+    <Compile Include="RealisticFall.cs" />
+    <Compile Include="Slap.cs" />
+    <Compile Include="SleeperGuard.cs" />
+    <Compile Include="Spectate.cs" />
+    <Compile Include="ThirdPerson.cs" />
+    <Compile Include="TimeWarnings.cs" />
+    <Compile Include="TurretConfig.cs" />
+    <Compile Include="Vanish.cs" />
     <Compile Include="AutoLearn.cs" />
     <Compile Include="ChatCleaner.cs" />
     <Compile Include="ChatSize.cs" />
     <Compile Include="ClipSize.cs" />
     <Compile Include="CupboardAway.cs" />
     <Compile Include="IDLookup.cs" />
+    <Compile Include="CupboardProtection.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MasterKey.cs" />
-    <Compile Include="NoChat.cs" />
     <Compile Include="NoResearch.cs" />
     <Compile Include="NoSupplySignal.cs" />
+    <Compile Include="HomeProtection.cs" />
     <Compile Include="ServerTags.cs" />
     <Compile Include="Comfort.cs" />
     <Compile Include="Developer.cs" />
@@ -88,13 +115,12 @@
     <Compile Include="FilterExt.cs" />
     <Compile Include="GatherRewards.cs" />
     <Compile Include="GeoIP.cs" />
-    <Compile Include="HooksTest.cs" />
+    <Compile Include="Hooks.cs" />
     <Compile Include="Ping.cs" />
     <Compile Include="Prefabs.cs" />
     <Compile Include="Protocol.cs" />
     <Compile Include="PushTest.cs" />
     <Compile Include="QuickSmelt.cs" />
-    <Compile Include="SignArtist.cs" />
     <Compile Include="DecayControl.cs" />
     <Compile Include="Unstuck.cs" />
     <Compile Include="Version.cs" />

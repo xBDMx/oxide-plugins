@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GeoIP.cs" />
+    <Compile Include="Spiritwalk.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

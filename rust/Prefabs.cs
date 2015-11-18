@@ -14,24 +14,19 @@ namespace Oxide.Plugins
                 return;
             }
 
-            foreach (var str in GameManifest.Get().pooledStrings)
-                Puts(str.str);
+            foreach (var str in GameManifest.Get().pooledStrings) Puts(str.str);
         }
 
         [ConsoleCommand("global.prefabs")]
         void ConsoleDump(ConsoleSystem.Arg arg)
         {
-            if (arg.connection != null)
+            if (arg.connection != null || arg.connection?.authLevel != 2)
             {
-                if (arg.connection.authLevel != 2)
-                {
-                    SendReply(arg, "You do not have permission to use this command!");
-                    return;
-                }
+                SendReply(arg, "You do not have permission to use this command!");
+                return;
             }
 
-            foreach (var str in GameManifest.Get().pooledStrings)
-                Puts(str.str);
+            foreach (var str in GameManifest.Get().pooledStrings) Puts(str.str);
         }
     }
 }

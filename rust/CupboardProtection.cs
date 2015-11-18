@@ -5,7 +5,7 @@ namespace Oxide.Plugins
 
     class CupboardProtection : RustPlugin
     {
-        object OnEntityTakeDamage(BaseCombatEntity entity, HitInfo info)
+        object OnEntityTakeDamage(BaseCombatEntity entity)
         {
             if (entity.name.Contains("cupboard")) return false;
             return null;

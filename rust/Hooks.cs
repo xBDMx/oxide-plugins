@@ -1,31 +1,31 @@
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("Hooks Test", "Oxide Team", 0.1)]
-    [Description("")]
+    [Info("Hooks", "Oxide Team", 0.1)]
+    [Description("Tests all of the available Oxide hooks.")]
 
-    public class HooksTest : RustPlugin
+    public class Hooks : RustPlugin
     {
-        int hookCount = 0;
+        #region Hook Verification
+
+        int hookCount;
         int hooksVerified;
         Dictionary<string, bool> hooksRemaining = new Dictionary<string, bool>();
 
-        public void HookCalled(string name)
+        public void HookCalled(string hook)
         {
-            if (!hooksRemaining.ContainsKey(name)) return;
+            if (!hooksRemaining.ContainsKey(hook)) return;
             hookCount--;
             hooksVerified++;
-            PrintWarning("{0} is working. {1} hooks verified!", name, hooksVerified);
-            hooksRemaining.Remove(name);
-            if (hookCount == 0)
-                PrintWarning("All hooks verified!");
-            else
-                PrintWarning("{0} hooks remaining: " + string.Join(", ", hooksRemaining.Keys.ToArray()), hookCount);
+            PrintWarning($"{hook} is working");
+            hooksRemaining.Remove(hook);
+            PrintWarning(hookCount == 0 ? "All hooks verified!" : $"{hooksVerified} hooks verified, {hookCount} hooks remaining");
         }
+
+        #endregion
 
         #region Plugin Hooks
 
@@ -37,66 +37,39 @@ namespace Oxide.Plugins
             HookCalled("Init");
         }
 
-        public void Loaded()
-        {
-            HookCalled("Loaded");
-        }
+        protected override void LoadDefaultConfig() => HookCalled("LoadDefaultConfig");
 
-        protected override void LoadDefaultConfig()
-        {
-            HookCalled("LoadDefaultConfig");
-        }
+        private void Loaded() => HookCalled("Loaded");
 
-        private void Unloaded()
-        {
-            HookCalled("Unloaded");
-            // TODO: Unload plugin and store state in config
-        }
+        private void Unloaded() => HookCalled("Unloaded");
+
+        private void OnFrame() => HookCalled("OnFrame");
 
         #endregion
 
         #region Server Hooks
 
-        private void BuildServerTags(IList<string> tags)
+        private void OnServerInitialized() => HookCalled("OnServerInitialized");
+
+        private void OnServerSave() => HookCalled("OnServerSave");
+
+        private void OnServerShutdown() => HookCalled("OnServerShutdown");
+
+        private void OnTick() => HookCalled("OnTick");
+
+        private void OnTerrainInitialized() => HookCalled("OnTerrainInitialized");
+
+        private bool tagsListed;
+        private void BuildServerTags(List<string> tags)
         {
             HookCalled("BuildServerTags");
-            // TODO: Print new tags
-        }
-
-        private void OnFrame()
-        {
-            HookCalled("OnFrame");
-        }
-
-        private void OnTick()
-        {
-            HookCalled("OnTick");
-        }
-
-        private void OnTerrainInitialized()
-        {
-            HookCalled("OnTerrainInitialized");
-        }
-
-        private void OnServerInitialized()
-        {
-            HookCalled("OnServerInitialized");
-        }
-
-        private void OnServerSave()
-        {
-            HookCalled("OnServerSave");
-        }
-
-        private void OnServerShutdown()
-        {
-            HookCalled("OnServerShutdown");
+            if (!tagsListed) Puts(string.Join(", ", tags.ToArray()));
+            tagsListed = true;
         }
 
         private void OnRunCommand(ConsoleSystem.Arg arg)
         {
             HookCalled("OnRunCommand");
-            // TODO: Run test command
             // TODO: Print command messages
         }
 
@@ -117,13 +90,13 @@ namespace Oxide.Plugins
         private void OnPlayerConnected(Network.Message packet)
         {
             HookCalled("OnPlayerConnected");
-            // TODO: Print player connected
+            Puts($"{packet.connection.username} ({packet.connection.userid}) connected!");
         }
 
         private void OnPlayerDisconnected(BasePlayer player, string reason)
         {
             HookCalled("OnPlayerDisconnected");
-            // TODO: Print player disconnected
+            Puts($"{player.displayName} ({player.userID}) disconnected!");
         }
 
         private void OnPlayerInit(BasePlayer player)
@@ -151,9 +124,9 @@ namespace Oxide.Plugins
             HookCalled("OnPlayerChat");
         }
 
-        private void OnPlayerLoot(PlayerLoot lootInventory, BaseEntity targetEntity)
-        //private void OnPlayerLoot(PlayerLoot lootInventory, BasePlayer targetPlayer)
-        //private void OnPlayerLoot(PlayerLoot lootInventory, Item targetItem)
+        private void OnPlayerLoot(PlayerLoot inventory, BaseEntity entity)
+        //private void OnPlayerLoot(PlayerLoot inventory, BasePlayer target)
+        //private void OnPlayerLoot(PlayerLoot inventory, Item item)
         {
             HookCalled("OnPlayerLoot");
         }
@@ -173,12 +146,17 @@ namespace Oxide.Plugins
 
         #region Entity Hooks
 
-        private void OnEntityTakeDamage(BaseCombatEntity entity, HitInfo hitInfo)
+        private void OnAirdrop(CargoPlane plane, Vector3 location)
+        {
+            HookCalled("OnAirdrop");
+        }
+
+        private void OnEntityTakeDamage(BaseCombatEntity entity, HitInfo info)
         {
             HookCalled("OnEntityTakeDamage");
         }
 
-        private void OnEntityBuilt(Planner planner, GameObject gameObject)
+        private void OnEntityBuilt(Planner planner, GameObject go)
         {
             HookCalled("OnEntityBuilt");
         }
@@ -190,12 +168,12 @@ namespace Oxide.Plugins
             // TODO: Automatically respawn admin after X time
         }
 
-        private void OnEntityEnter(TriggerBase triggerBase, BaseEntity entity)
+        private void OnEntityEnter(TriggerBase trigger, BaseEntity entity)
         {
             HookCalled("OnEntityEnter");
         }
 
-        private void OnEntityLeave(TriggerBase triggerBase, BaseEntity entity)
+        private void OnEntityLeave(TriggerBase trigger, BaseEntity entity)
         {
             HookCalled("OnEntityLeave");
         }
@@ -215,7 +193,7 @@ namespace Oxide.Plugins
             // TODO: Print item crafting
         }
 
-        private void OnItemDeployed(Deployer deployer, BaseEntity deployedEntity)
+        private void OnItemDeployed(Deployer deployer, BaseEntity entity)
         {
             HookCalled("OnItemDeployed");
             // TODO: Print item deployed
@@ -224,6 +202,7 @@ namespace Oxide.Plugins
         private void OnItemPickup(BasePlayer player, Item item)
         {
             HookCalled("OnItemPickup");
+            // TODO: Print item picked up
         }
 
         private void OnItemAddedToContainer(ItemContainer container, Item item)
@@ -262,20 +241,17 @@ namespace Oxide.Plugins
             // TODO: Print item to be gathered
         }
 
-        private void OnSurveyGather(SurveyCharge surveyCharge, Item item)
+        private void OnSurveyGather(SurveyCharge survey, Item item)
         {
             HookCalled("OnSurveyGather");
         }
 
-        private void OnQuarryGather(MiningQuarry miningQuarry, Item item)
+        private void OnQuarryGather(MiningQuarry quarry, Item item)
         {
             HookCalled("OnQuarryGather");
         }
 
-        private void OnQuarryEnabled()
-        {
-            HookCalled("OnQuarryEnabled");
-        }
+        private void OnQuarryEnabled() => HookCalled("OnQuarryEnabled");
 
         private void OnTrapArm(BearTrap trap)
         {
@@ -297,8 +273,8 @@ namespace Oxide.Plugins
         #region Structure Hooks
 
         private void CanUseDoor(BasePlayer player, BaseLock door)
-        //private void CanUseDoor(BasePlayer player, CodeLock doorCode)
-        //private void CanUseDoor(BasePlayer player, KeyLock doorKey)
+        //private void CanUseDoor(BasePlayer player, CodeLock door)
+        //private void CanUseDoor(BasePlayer player, KeyLock door)
         {
             HookCalled("CanUseDoor");
         }
@@ -329,10 +305,5 @@ namespace Oxide.Plugins
         }
 
         #endregion
-
-        private void OnAirdrop(CargoPlane plane, Vector3 dropLocation)
-        {
-            HookCalled("OnAirdrop");
-        }
     }
 }

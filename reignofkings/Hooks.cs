@@ -1,46 +1,37 @@
-/*
-TODO: Fix warnings
-    HooksTest.cs(168,19): warning CS0472: The result of comparing value type `byte' with null is always `false'
-    HooksTest.cs(168,41): warning CS0472: The result of comparing value type `ulong' with null is always `false'
-    HooksTest.cs(168,63): warning CS0472: The result of comparing value type `byte' with null is always `false'
-    HooksTest.cs(168,85): warning CS0472: The result of comparing value type `CodeHatch.Common.Vector3Int' with null is always `false'
-    HooksTest.cs(168,103): warning CS0162: Unreachable code detected
-*/
-
-using System.Collections.Generic;
-using System.Linq;
-
+using CodeHatch.Blocks.Networking.Events;
 using CodeHatch.Engine.Core.Networking;
 using CodeHatch.Engine.Networking;
-using CodeHatch.Blocks.Networking.Events;
 using CodeHatch.Networking.Events.Entities;
 using CodeHatch.Networking.Events.Entities.Players;
 using CodeHatch.Networking.Events.Players;
 using CodeHatch.Networking.Events.Social;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Oxide.Plugins
 {
-    [Info("Hooks Test", "Oxide Team", 0.1)]
-    [Description("")]
+    [Info("Hooks", "Oxide Team", 0.1)]
+    [Description("Tests all of the available Oxide hooks.")]
 
-    public class HooksTest : ReignOfKingsPlugin
+    public class Hooks : ReignOfKingsPlugin
     {
-        int hookCount = 0;
+        #region Hook Verification
+
+        int hookCount;
         int hooksVerified;
         Dictionary<string, bool> hooksRemaining = new Dictionary<string, bool>();
 
-        public void HookCalled(string name)
+        public void HookCalled(string hook)
         {
-            if (!hooksRemaining.ContainsKey(name)) return;
+            if (!hooksRemaining.ContainsKey(hook)) return;
             hookCount--;
             hooksVerified++;
-            PrintWarning("{0} is working. {1} hooks verified!", name, hooksVerified);
-            hooksRemaining.Remove(name);
-            if (hookCount == 0)
-                PrintWarning("All hooks verified!");
-            else
-                PrintWarning("{0} hooks remaining: " + string.Join(", ", hooksRemaining.Keys.ToArray()), hookCount);
+            PrintWarning($"{hook} is working");
+            hooksRemaining.Remove(hook);
+            PrintWarning(hookCount == 0 ? "All hooks verified!" : $"{hooksVerified} hooks verified, {hookCount} hooks remaining");
         }
+
+        #endregion
 
         #region Plugin Hooks
 
@@ -52,47 +43,23 @@ namespace Oxide.Plugins
             HookCalled("Init");
         }
 
-        public void Loaded()
-        {
-            HookCalled("Loaded");
-        }
+        protected override void LoadDefaultConfig() => HookCalled("LoadDefaultConfig");
 
-        protected override void LoadDefaultConfig()
-        {
-            HookCalled("LoadDefaultConfig");
-        }
+        private void Loaded() => HookCalled("Loaded");
 
-        private void Unloaded()
-        {
-            HookCalled("Unloaded");
-        }
+        private void Unloaded() => HookCalled("Unloaded");
 
-        private void OnFrame()
-        {
-            HookCalled("OnFrame");
-        }
+        private void OnFrame() => HookCalled("OnFrame");
 
         #endregion
 
         #region Server Hooks
 
-        private void OnServerInitialized()
-        {
-            HookCalled("OnServerInitialized");
-            Puts("Running OnServerInitialized");
-        }
+        private void OnServerInitialized() => HookCalled("OnServerInitialized");
 
-        private void OnServerSave()
-        {
-            HookCalled("OnServerSave");
-            Puts("Running OnServerSave");
-        }
+        private void OnServerSave() => HookCalled("OnServerSave");
 
-        private void OnServerShutdown()
-        {
-            HookCalled("OnServerShutdown");
-            Puts("Running OnServerShutdown");
-        }
+        private void OnServerShutdown() => HookCalled("OnServerShutdown");
 
         #endregion
 
@@ -101,8 +68,7 @@ namespace Oxide.Plugins
         private ConnectionError OnUserApprove(ConnectionLoginData data)
         {
             HookCalled("OnUserApprove");
-            Puts("Running OnUserApprove for player " + data.PlayerName + " with SteamID " + data.PlayerId.ToString());
-
+            Puts("Running OnUserApprove for player " + data.PlayerName + " with SteamID " + data.PlayerId);
             return ConnectionError.NoError;
         }
 
@@ -140,7 +106,8 @@ namespace Oxide.Plugins
 
         private void OnPlayerSpawn(PlayerFirstSpawnEvent e)
         {
-            Puts(e.Player.DisplayName + " spawned at " + e.Position.ToString());
+            HookCalled("OnPlayerSpawn");
+            Puts(e.Player.DisplayName + " spawned at " + e.Position);
             if (e.AtFirstSpawn)
                 NextTick( () => SendReply(e.Player, "Welcome to our server, we've noticed this is your first time here so we want to inform you that you can visit our website at oxidemod.org"));
         }
@@ -154,8 +121,6 @@ namespace Oxide.Plugins
             HookCalled("OnEntityHealthChange");
             if (e.Damage.Amount > 0)
                 Puts($"{e.Entity} took {e.Damage.Amount} {e.Damage?.DamageTypes} damage from {e.Damage?.DamageSource} ({e.Damage?.Damager?.name})");
-
-
             if (e.Damage.Amount < 0)
                 Puts($"{e.Entity} gained {e.Damage.Amount} health.");
         }
@@ -163,10 +128,9 @@ namespace Oxide.Plugins
         private void OnEntityDeath(EntityDeathEvent e)
         {
             HookCalled("OnEntityDeath");
-            if (e.KillingDamage != null)
-                Puts($"{e.Entity} was killed by {e.KillingDamage?.DamageSource} ({e.KillingDamage?.DamageTypes})");
-            else
-                Puts($"{e.Entity} died.");
+            Puts(e.KillingDamage != null
+                ? $"{e.Entity} was killed by {e.KillingDamage?.DamageSource} ({e.KillingDamage?.DamageTypes})"
+                : $"{e.Entity} died.");
         }
 
         #endregion
@@ -175,29 +139,29 @@ namespace Oxide.Plugins
 
         private void OnCubePlacement(CubePlaceEvent e)
         {
-            var bp = CodeHatch.Blocks.Inventory.InventoryUtil.GetTilesetBlueprint(e.Material, (int)e.PrefabId);
+            HookCalled("OnCubePlacement");
+
+            var bp = CodeHatch.Blocks.Inventory.InventoryUtil.GetTilesetBlueprint(e.Material, e.PrefabId);
             if (bp == null) return;
 
             Player player = null;
-            foreach (var ply in Server.ClientPlayers)
-            {
-                if (ply.Id == e.SenderId)
-                {
-                    player = ply;
-                }
+            foreach (var ply in Server.ClientPlayers.Where(ply => ply.Id == e.SenderId)) {
+                player = ply;
             }
             if (player != null)
-                Puts(player.DisplayName + " placed a " + bp.Name + " at " + e.Position.ToString());
+                Puts(player.DisplayName + " placed a " + bp.Name + " at " + e.Position);
         }
 
         private void OnCubeTakeDamage(CubeDamageEvent e)
         {
+            HookCalled("OnCubeTakeDamage");
             Puts($"Cube at {e.Position} took {e.Damage.Amount} damage from {e.Damage.DamageSource}");
         }
 
         private void OnCubeDestroyed(CubeDestroyEvent e)
         {
-            Puts("Cube at " + e.Position.ToString() + " was destroyed");
+            HookCalled("OnCubeDestroyed");
+            Puts("Cube at " + e.Position + " was destroyed");
         }
 
         #endregion

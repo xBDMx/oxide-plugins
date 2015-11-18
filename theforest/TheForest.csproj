@@ -37,8 +37,15 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-UnityScript">
+      <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\Assembly-UnityScript.dll</HintPath>
+    </Reference>
     <Reference Include="bolt">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\bolt.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt.user, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\bolt.user.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\Newtonsoft.Json.dll</HintPath>
@@ -58,9 +65,14 @@
     <Reference Include="PlayMaker">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\PlayMaker.dll</HintPath>
     </Reference>
+    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\Rewired_Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="udpkit.common, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -72,8 +84,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Announcer.cs" />
     <Compile Include="FilterExt.cs" />
-    <Compile Include="HooksTest.cs" />
+    <Compile Include="Hooks.cs" />
+    <Compile Include="Logger.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

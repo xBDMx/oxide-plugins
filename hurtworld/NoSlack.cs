@@ -8,9 +8,9 @@ namespace Oxide.Plugins
         void OnServerInitialized()
         {
             GameManager.Instance.EnableSlackNotifications = false;
-            Puts("Slack notifications disabled!");
+            PrintWarning("Slack notifications disabled!");
         }
 
-        object OnPostToSlack() => null;
+        bool OnPostToSlack() => true;
     }
 }

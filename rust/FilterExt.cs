@@ -1,11 +1,10 @@
 using System.Linq;
-
 using Oxide.Game.Rust;
 
 namespace Oxide.Plugins
 {
     [Info("FilterExt", "Wulf/lukespragg", 0.1)]
-    [Description("Extension to Oxide's filter for removing unwanted messages.")]
+    [Description("Extension to Oxide's filter for removing unwanted console messages.")]
 
     class FilterExt : RustPlugin
     {
@@ -23,7 +22,7 @@ namespace Oxide.Plugins
             filter.Add("Saving complete");
             filter.Add("TimeWarning:");
             filter.Add("but max allowed is");
-            filter.Add("[event] assets/bundled/prefabs/");
+            filter.Add("[event] assets/");
 
             // Update filter list
             RustExtension.Filter = filter.ToArray();

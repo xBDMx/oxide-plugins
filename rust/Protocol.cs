@@ -2,7 +2,7 @@
 
 namespace Oxide.Plugins
 {
-    [Info("Protocol", "Wulf/lukespragg", 0.1)]
+    [Info("Protocol", "Wulf/lukespragg", 0.1, ResourceId = 0)]
     [Description("Allows any client, regardless of protocol, to connect.")]
 
     class Protocol : RustPlugin
