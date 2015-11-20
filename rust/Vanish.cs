@@ -6,9 +6,7 @@ TODO:
 - Add max vanish time option
 - Add AppearWhileRunning option (player.IsRunning())
 - Add AppearWhenDamaged option (player.IsWounded())
-- Add CanUseTeleport option
 - Add restoring after reconnection (datafile/static dictionary)
-- Add messages for when attacking when not allowed
 - Fix 'CanUseWeapon' only visually hiding item; find a better way
 - Fix CUI overlay overlapping HUD elements/inventory
 */
@@ -20,7 +18,7 @@ using Oxide.Game.Rust.Cui;
 
 namespace Oxide.Plugins
 {
-    [Info("Vanish", "Wulf/lukespragg", "0.2.1", ResourceId = 1420)]
+    [Info("Vanish", "Wulf/lukespragg", "0.2.3", ResourceId = 1420)]
     [Description("Allows players with permission to become truly invisible.")]
 
     class Vanish : RustPlugin
@@ -31,6 +29,11 @@ namespace Oxide.Plugins
 
         // Messages
         string ChatCommand => GetConfig("ChatCommand", "vanish");
+        string CantBeHurt => GetConfig("CantBeHurt", "You can't be hurt while vanished");
+        string CantDamageBuilds => GetConfig("CantDamageBuilds", "You can't damage buildings while vanished");
+        string CantHurtAnimals => GetConfig("CantHurtAnimals", "You can't hurt animals while vanished");
+        string CantHurtPlayers => GetConfig("CantHurtPlayers", "You can't hurt players while vanished");
+        string CantUseTeleport => GetConfig("CantUseTeleport", "You can't teleport while vanished");
         string NoPermission => GetConfig("NoPermission", "Sorry, you can't use 'vanish' right now");
         string VanishDisabled => GetConfig("VanishDisabled", "You are no longer invisible!");
         string VanishEnabled => GetConfig("VanishEnabled", "You have vanished from sight...");
@@ -40,6 +43,7 @@ namespace Oxide.Plugins
         bool CanDamageBuilds => GetConfig("CanDamageBuilds", true);
         bool CanHurtAnimals => GetConfig("CanHurtAnimals", true);
         bool CanHurtPlayers => GetConfig("CanHurtPlayers", true);
+        bool CanUseTeleport => GetConfig("CanUseTeleport", true);
         //bool CanUseWeapons => GetConfig("CanUseWeapons", true);
         bool ShowIndicator => GetConfig("ShowIndicator", true);
         bool ShowOverlay => GetConfig("ShowOverlay", false);
@@ -50,6 +54,11 @@ namespace Oxide.Plugins
         {
             // Messages
             Config["ChatCommand"] = ChatCommand;
+            Config["CantBeHurt"] = CantBeHurt;
+            Config["CantDamageBuilds"] = CantDamageBuilds;
+            Config["CantHurtAnimals"] = CantHurtAnimals;
+            Config["CantHurtPlayers"] = CantHurtPlayers;
+            Config["CantUseTeleport"] = CantUseTeleport;
             Config["NoPermission"] = NoPermission;
             Config["VanishDisabled"] = VanishDisabled;
             Config["VanishEnabled"] = VanishEnabled;
@@ -59,6 +68,7 @@ namespace Oxide.Plugins
             Config["CanDamageBuilds"] = CanDamageBuilds;
             Config["CanHurtAnimals"] = CanHurtAnimals;
             Config["CanHurtPlayers"] = CanHurtPlayers;
+            Config["CanUseTeleport"] = CanUseTeleport;
             //Config["CanUseWeapons"] = CanUseWeapons;
             Config["ShowIndicator"] = ShowIndicator;
             Config["ShowOverlay"] = ShowOverlay;
@@ -127,7 +137,8 @@ namespace Oxide.Plugins
             var connections = new List<Connection>();
             foreach (var basePlayer in BasePlayer.activePlayerList)
             {
-                if (player == basePlayer) continue;
+                Puts($"{player.displayName} ({player.UserIDString})");
+                if (player == basePlayer && player.displayName != null) continue;
                 if (VisibleToAdmin && IsAdmin(basePlayer)) continue;
                 connections.Add(basePlayer.net.connection);
             }
@@ -259,26 +270,33 @@ namespace Oxide.Plugins
             // Block damage to animals
             if (entity is BaseNPC)
             {
-                if (!CanHurtAnimals) return true;
-                return null;
+                if (CanHurtAnimals) return null;
+                PrintToChat(player, CantHurtAnimals);
+                return true;
             }
 
             // Block damage to builds
             if (!(entity is BasePlayer))
             {
-                if (!CanDamageBuilds) return true;
-                return null;
+                if (CanDamageBuilds) return null;
+                PrintToChat(player, CantDamageBuilds);
+                return true;
             }
 
             // Block damage to players
             if (info?.Initiator is BasePlayer)
             {
-                if (!CanHurtPlayers) return true;
-                return null;
+                if (CanHurtPlayers) return null;
+                PrintToChat(player, CantHurtPlayers);
+                return true;
             }
 
             // Block damage to self
-            if (!CanBeHurt) return true;
+            if (!CanBeHurt)
+            {
+                PrintToChat(player, CantBeHurt);
+                return true;
+            }
 
             return null;
         }
@@ -296,6 +314,16 @@ namespace Oxide.Plugins
                 heldEntity?.SetHeld(false);
             }
         }*/
+
+        #endregion
+
+        #region Teleport Blocking
+
+        object CanTeleport(BasePlayer player)
+        {
+            if (onlinePlayers[player].IsInvisible && !CanUseTeleport) return CantUseTeleport;
+            return null;
+        }
 
         #endregion
 

@@ -3,7 +3,7 @@ using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
-    [Info("Robbery", "Wulf/lukespragg", "2.2.0", ResourceId = 736)]
+    [Info("Robbery", "Wulf/lukespragg", "2.2.2", ResourceId = 736)]
     [Description("Players can steal Economics money from other players.")]
 
     class Robbery : RustPlugin
@@ -66,8 +66,11 @@ namespace Oxide.Plugins
             // Check if player is in event/zone with no looting
             var inEvent = EventManager?.Call("isPlaying", victim);
             if (inEvent != null && (bool)inEvent) return;
-            var noLoot = ZoneManager?.Call("HasPlayerFlag", victim, 1 << 16);
-            if (noLoot != null && (bool)noLoot) return;
+            if (ZoneManager != null)
+            {
+                var noLooting = Enum.Parse(ZoneManager.GetType().GetNestedType("ZoneFlags"), "noplayerloot", true);
+                if ((bool)ZoneManager.CallHook("HasPlayerFlag", victim, noLooting)) return;
+            }
 
             // Calculate and transfer money
             var wallet = (double)Economics.Call("GetPlayerMoney", victim.userID);

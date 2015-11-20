@@ -1,13 +1,7 @@
-/*
-TODO:
-- Check if all permissions work
-- Fix doors not working
-*/
-
 using System;
 namespace Oxide.Plugins
 {
-    [Info("MasterKey", "Wulf/lukespragg", "0.3.0", ResourceId = 1151)]
+    [Info("MasterKey", "Wulf/lukespragg", "0.3.1", ResourceId = 1151)]
     [Description("Gain access to any locked object with permissions.")]
 
     class MasterKey : RustPlugin
@@ -60,7 +54,8 @@ namespace Oxide.Plugins
         object CanUseDoor(BasePlayer player, BaseLock door)
         {
             var parent = door.parentEntity.Get(true);
-            var prefab = parent.LookupPrefabName();
+            var prefab = parent.LookupPrefabName();
+
             if (!door.IsLocked()) return true;
 
             if (prefab.Contains("box.wooden") || prefab.Contains("woodbox_deployed"))
@@ -74,7 +69,7 @@ namespace Oxide.Plugins
             if (prefab.Contains("door.hinged"))
             {
                 if (!HasPermission(player, "masterkey.all") && !HasPermission(player, "masterkey.doors")) return null;
-                if (!parent.IsOpen()) return null;
+                if (parent.IsOpen()) return true;
                 if (ShowMessages) PrintToChat(player, UnlockedWith.Replace("{object}", "door"));
                 if (LogUsage) LogToFile(player, MasterKeyUsed);
                 return true;
@@ -91,7 +86,7 @@ namespace Oxide.Plugins
             if (prefab.Contains("gates.external"))
             {
                 if (!HasPermission(player, "masterkey.all") && !HasPermission(player, "masterkey.gates")) return null;
-                if (!parent.IsOpen()) return null;
+                if (parent.IsOpen()) return true;
                 if (ShowMessages) PrintToChat(player, UnlockedWith.Replace("{object}", "gate"));
                 if (LogUsage) LogToFile(player, MasterKeyUsed);
                 return true;

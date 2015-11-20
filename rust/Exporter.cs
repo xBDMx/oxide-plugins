@@ -24,10 +24,12 @@ namespace Oxide.Plugins
             Log("ItemSkinsDocs", "# Item Skins");
 
             // Prefab List: http://docs.oxidemod.org/rust/#prefab-list
-            // TODO: Generate
+            Log("PrefabListDocs", "# Prefab List");
 
             foreach (var item in itemList)
             {
+                #region Item List
+
                 var idSpace = string.Empty;
                 var displayname = item.displayName.english.Replace("\t", "").Replace("\r", "").Replace("\n", "");
                 var shortname = item.shortname.Replace("\t", " ").Replace("\r", "").Replace("\n", "");
@@ -38,6 +40,10 @@ namespace Oxide.Plugins
                 for (var i = 0; i < 25 - shortname.Length; i++)  shortnameSpace += " ";
 
                 Log("ItemListDocs", $"| {item.itemid}{idSpace}| {displayname}{nameSpace}| {shortname}{shortnameSpace}|");
+
+                #endregion
+
+                #region Item Skins
 
                 if (item.skins.Length == 0) continue;
                 Log("ItemSkinsDocs", "");
@@ -55,13 +61,25 @@ namespace Oxide.Plugins
 
                     Log("ItemSkinsDocs", $"| {skin.id}{idSpace}| {skinname}{shortnameSpace}|");
                 }
+
+                #endregion
             }
         }
+
+        [ConsoleCommand("export.prefabs")]
+        void ExportPrefabs()
+        {
+            foreach (var prefab in GameManifest.Get().pooledStrings) Puts(prefab.str);
+        }
+
+        #region Helper Methods
 
         static void Log(string fileName, string content)
         {
             var dateTime = DateTime.Now.ToString("yyMMdd_HHmmss");
             ConVar.Server.Log($"oxide/logs/{fileName}_{dateTime}.txt", content);
         }
+
+        #endregion
     }
 }

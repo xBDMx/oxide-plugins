@@ -14,7 +14,7 @@ using Oxide.Core.Plugins;
 
 namespace Oxide.Plugins
 {
-    [Info("MoneyTime", "Wulf/lukespragg", "1.0.2", ResourceId = 836)]
+    [Info("MoneyTime", "Wulf/lukespragg", "1.0.3", ResourceId = 836)]
     [Description("Pays players money via Economics for playing on your server.")]
 
     class MoneyTime : RustPlugin
@@ -29,10 +29,10 @@ namespace Oxide.Plugins
         string ReceivedWelcomeBonus => GetConfig("ReceivedWelcomeBonus", "You've received ${amount} as a welcome bonus!");
 
         // Settings
-        float BasePayout => GetConfig("BasePayout", 10f);
+        float BasePayout => GetConfig("BasePayout", 5f);
         int PayoutInterval => GetConfig("PayoutInterval", 600);
         bool TimeAliveBonus => GetConfig("TimeAliveBonus", true);
-        float TimeAliveMultiplier => GetConfig("TimeAliveMultiplier", 2f);
+        float TimeAliveMultiplier => GetConfig("TimeAliveMultiplier", 0.5f);
         float WelcomeBonus => GetConfig("WelcomeBonus", 500f);
 
         protected override void LoadDefaultConfig()
