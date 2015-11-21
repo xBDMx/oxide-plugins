@@ -1,6 +1,6 @@
 namespace Oxide.Plugins
 {
-    [Info("No Slack", "Wulf/lukespragg", 0.1)]
+    [Info("NoSlack", "Wulf/lukespragg", 0.1)]
     [Description("Disables Slack notifications.")]
 
     public class NoSlack : HurtworldPlugin
@@ -11,6 +11,6 @@ namespace Oxide.Plugins
             PrintWarning("Slack notifications disabled!");
         }
 
-        bool OnPostToSlack() => true;
+        bool OnPostToSlack() => false;
     }
 }

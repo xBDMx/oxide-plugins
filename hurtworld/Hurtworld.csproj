@@ -72,6 +72,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Announcer.cs" />
+    <Compile Include="FilterExt.cs" />
     <Compile Include="NoSlack.cs" />
     <Compile Include="Slack.cs" />
   </ItemGroup>

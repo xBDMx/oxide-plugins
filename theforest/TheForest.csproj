@@ -43,8 +43,7 @@
     <Reference Include="bolt">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\bolt.dll</HintPath>
     </Reference>
-    <Reference Include="bolt.user, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="bolt.user">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\bolt.user.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -65,14 +64,18 @@
     <Reference Include="PlayMaker">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\PlayMaker.dll</HintPath>
     </Reference>
-    <Reference Include="Rewired_Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rewired_Core">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\Rewired_Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="udpkit.common, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="udpkit">
+      <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\udpkit.dll</HintPath>
+    </Reference>
+    <Reference Include="udpkit.common">
+      <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\udpkit.common.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\Servers\Game\TheForest\TheForest_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
