@@ -14,15 +14,15 @@ namespace Oxide.Plugins
             var filter = RustExtension.Filter.ToList();
 
             // Add messages to filter
+            filter.Add(", serialization");
             filter.Add("- deleting");
             filter.Add("ERROR building certificate chain");
             filter.Add("Enforcing SpawnPopulation Limits");
             filter.Add("Reporting Performance Data");
-            filter.Add("Saved ");
             filter.Add("Saving complete");
             filter.Add("TimeWarning:");
-            filter.Add("but max allowed is");
             filter.Add("[event] assets/");
+            filter.Add("but max allowed is");
 
             // Update filter list
             RustExtension.Filter = filter.ToArray();

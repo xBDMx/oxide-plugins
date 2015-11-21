@@ -3,9 +3,9 @@ TODO:
 - Add option to hide as a deployed entity of choice
 - Add command cooldown option
 - Add daily limit option
-- Add max vanish time option
 - Add AppearWhileRunning option (player.IsRunning())
 - Add AppearWhenDamaged option (player.IsWounded())
+- Add options for where to position status indicator
 - Add restoring after reconnection (datafile/static dictionary)
 - Fix 'CanUseWeapon' only visually hiding item; find a better way
 - Fix CUI overlay overlapping HUD elements/inventory
@@ -18,7 +18,7 @@ using Oxide.Game.Rust.Cui;
 
 namespace Oxide.Plugins
 {
-    [Info("Vanish", "Wulf/lukespragg", "0.2.3", ResourceId = 1420)]
+    [Info("Vanish", "Wulf/lukespragg", "0.2.4", ResourceId = 1420)]
     [Description("Allows players with permission to become truly invisible.")]
 
     class Vanish : RustPlugin
@@ -29,7 +29,6 @@ namespace Oxide.Plugins
 
         // Messages
         string ChatCommand => GetConfig("ChatCommand", "vanish");
-        string CantBeHurt => GetConfig("CantBeHurt", "You can't be hurt while vanished");
         string CantDamageBuilds => GetConfig("CantDamageBuilds", "You can't damage buildings while vanished");
         string CantHurtAnimals => GetConfig("CantHurtAnimals", "You can't hurt animals while vanished");
         string CantHurtPlayers => GetConfig("CantHurtPlayers", "You can't hurt players while vanished");
@@ -37,6 +36,7 @@ namespace Oxide.Plugins
         string NoPermission => GetConfig("NoPermission", "Sorry, you can't use 'vanish' right now");
         string VanishDisabled => GetConfig("VanishDisabled", "You are no longer invisible!");
         string VanishEnabled => GetConfig("VanishEnabled", "You have vanished from sight...");
+        string VanishTimedOut => GetConfig("VanishTimedOut", "Vanish timeout reached!");
 
         // Settings
         bool CanBeHurt => GetConfig("CanBeHurt", false);
@@ -45,16 +45,16 @@ namespace Oxide.Plugins
         bool CanHurtPlayers => GetConfig("CanHurtPlayers", true);
         bool CanUseTeleport => GetConfig("CanUseTeleport", true);
         //bool CanUseWeapons => GetConfig("CanUseWeapons", true);
+        bool ShowEffect => GetConfig("ShowEffect", true);
         bool ShowIndicator => GetConfig("ShowIndicator", true);
         bool ShowOverlay => GetConfig("ShowOverlay", false);
+        float VanishTimeout => GetConfig("VanishTimeout", 0f);
         bool VisibleToAdmin => GetConfig("VisibleToAdmin", true);
-        bool VisualEffect => GetConfig("VisualEffect", true);
 
         protected override void LoadDefaultConfig()
         {
             // Messages
             Config["ChatCommand"] = ChatCommand;
-            Config["CantBeHurt"] = CantBeHurt;
             Config["CantDamageBuilds"] = CantDamageBuilds;
             Config["CantHurtAnimals"] = CantHurtAnimals;
             Config["CantHurtPlayers"] = CantHurtPlayers;
@@ -62,6 +62,7 @@ namespace Oxide.Plugins
             Config["NoPermission"] = NoPermission;
             Config["VanishDisabled"] = VanishDisabled;
             Config["VanishEnabled"] = VanishEnabled;
+            Config["VanishTimedOut"] = VanishTimedOut;
 
             // Settings
             Config["CanBeHurt"] = CanBeHurt;
@@ -70,10 +71,11 @@ namespace Oxide.Plugins
             Config["CanHurtPlayers"] = CanHurtPlayers;
             Config["CanUseTeleport"] = CanUseTeleport;
             //Config["CanUseWeapons"] = CanUseWeapons;
+            Config["ShowEffect"] = ShowEffect;
             Config["ShowIndicator"] = ShowIndicator;
             Config["ShowOverlay"] = ShowOverlay;
+            Config["VanishTimeout"] = VanishTimeout;
             Config["VisibleToAdmin"] = VisibleToAdmin;
-            Config["VisualEffect"] = VisualEffect;
 
             SaveConfig();
         }
@@ -115,7 +117,7 @@ namespace Oxide.Plugins
             }
 
             // Vanishing visual effect
-            if (VisualEffect) Effect.server.Run("assets/prefabs/npc/patrol helicopter/effects/rocket_fire.prefab", player.transform.position);
+            if (ShowEffect) Effect.server.Run("assets/prefabs/npc/patrol helicopter/effects/rocket_fire.prefab", player.transform.position);
 
             // Remove player/held item from view
             if (IsInvisible(player))
@@ -137,7 +139,6 @@ namespace Oxide.Plugins
             var connections = new List<Connection>();
             foreach (var basePlayer in BasePlayer.activePlayerList)
             {
-                Puts($"{player.displayName} ({player.UserIDString})");
                 if (player == basePlayer && player.displayName != null) continue;
                 if (VisibleToAdmin && IsAdmin(basePlayer)) continue;
                 connections.Add(basePlayer.net.connection);
@@ -158,8 +159,16 @@ namespace Oxide.Plugins
                 Net.sv.write.Send(new SendInfo(connections));
             }
 
-            // Add overlay effect
+            // Add overlay effect if enabled
             if (ShowOverlay || ShowIndicator) VanishGui(player);
+
+            // Set max vanish time if enabled
+            if (VanishTimeout > 0f) timer.Once(VanishTimeout, () =>
+            {
+                if (!onlinePlayers[player].IsInvisible) return;
+                PrintToChat(player, VanishTimedOut);
+                Reappear(player);
+            });
 
             // Save and notify
             PrintToChat(player, VanishEnabled);
@@ -228,6 +237,7 @@ namespace Oxide.Plugins
             var elements = new CuiElementContainer();
             GuiInfo[player.userID] = CuiHelper.GetGuid();
 
+            // Show GUI indicator if enabled
             if (ShowIndicator)
             {
                 elements.Add(new CuiElement
@@ -241,6 +251,7 @@ namespace Oxide.Plugins
                 });
             }
 
+            // Show GUI overlay if enabled
             if (ShowOverlay)
             {
                 elements.Add(new CuiElement
@@ -292,11 +303,7 @@ namespace Oxide.Plugins
             }
 
             // Block damage to self
-            if (!CanBeHurt)
-            {
-                PrintToChat(player, CantBeHurt);
-                return true;
-            }
+            if (!CanBeHurt) return true;
 
             return null;
         }

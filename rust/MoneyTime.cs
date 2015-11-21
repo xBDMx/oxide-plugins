@@ -2,7 +2,7 @@
 TODO:
 - Add option to disable payout for AFK players (store last moved time)
 - Add option for daily/weekly login bonuses
-- Utilize player.net.connection.GetSecondsConnected() to multiplying
+- Utilize player.net.connection.GetSecondsConnected()
 */
 
 using System;
@@ -32,7 +32,7 @@ namespace Oxide.Plugins
         float BasePayout => GetConfig("BasePayout", 5f);
         int PayoutInterval => GetConfig("PayoutInterval", 600);
         bool TimeAliveBonus => GetConfig("TimeAliveBonus", true);
-        float TimeAliveMultiplier => GetConfig("TimeAliveMultiplier", 0.5f);
+        float TimeAliveMultiplier => GetConfig("TimeAliveMultiplier", 1.0f);
         float WelcomeBonus => GetConfig("WelcomeBonus", 500f);
 
         protected override void LoadDefaultConfig()

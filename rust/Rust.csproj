@@ -72,10 +72,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AntiLockPick.cs" />
+    <Compile Include="AssetDump.cs" />
+    <Compile Include="CountryBlock.cs" />
+    <Compile Include="Third-Party\AntiLockPick.cs" />
     <Compile Include="AutoDoors.cs" />
     <Compile Include="AutoFurnaces.cs" />
-    <Compile Include="DeathSign.cs" />
+    <Compile Include="CharitySigns.cs" />
+    <Compile Include="DeathSigns.cs" />
     <Compile Include="HeliInbound.cs" />
     <Compile Include="HideAndSeek.cs" />
     <Compile Include="HomeSigns.cs" />
@@ -88,19 +91,22 @@
     <Compile Include="Possession.cs" />
     <Compile Include="QuarryFactory.cs" />
     <Compile Include="RealisticFall.cs" />
+    <Compile Include="Robbery.cs" />
+    <Compile Include="Third-Party\SignArtist.cs" />
     <Compile Include="Slap.cs" />
     <Compile Include="SleeperGuard.cs" />
     <Compile Include="Spectate.cs" />
     <Compile Include="ThirdPerson.cs" />
-    <Compile Include="TimeWarnings.cs" />
-    <Compile Include="TurretConfig.cs" />
+    <Compile Include="Third-Party\TimeWarnings.cs" />
+    <Compile Include="Third-Party\TurretConfig.cs" />
+    <Compile Include="Third-Party\UsableToBelt.cs" />
     <Compile Include="Vanish.cs" />
     <Compile Include="AutoLearn.cs" />
     <Compile Include="ChatCleaner.cs" />
     <Compile Include="ChatSize.cs" />
-    <Compile Include="ClipSize.cs" />
+    <Compile Include="Third-Party\ClipSize.cs" />
     <Compile Include="CupboardAway.cs" />
-    <Compile Include="IDLookup.cs" />
+    <Compile Include="Third-Party\IDLookup.cs" />
     <Compile Include="CupboardProtection.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MasterKey.cs" />
@@ -124,7 +130,7 @@
     <Compile Include="DecayControl.cs" />
     <Compile Include="Unstuck.cs" />
     <Compile Include="Version.cs" />
-    <Compile Include="ZLevels.cs" />
+    <Compile Include="Third-Party\ZLevels.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
