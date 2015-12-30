@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C27EB0E1-D92C-444D-89E9-2D58141DCF3B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Unturned</RootNamespace>
+    <AssemblyName>Unturned</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\Unturned\</OutputPath>
+    <DefineConstants>UNTURNED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Unturned\Dependencies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Unturned\Dependencies\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core">
+      <HintPath>..\..\Oxide\Bundles\Unturned\Unturned_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.CSharp">
+      <HintPath>..\..\Oxide\Bundles\Unturned\Unturned_Data\Managed\Oxide.Ext.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.Unity">
+      <HintPath>..\..\Oxide\Bundles\Unturned\Unturned_Data\Managed\Oxide.Ext.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Game.Unturned">
+      <HintPath>..\..\Oxide\Bundles\Unturned\Unturned_Data\Managed\Oxide.Game.Unturned.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Unturned\Dependencies\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CountryBlock.cs" />
+    <Compile Include="FilterExt.cs" />
+    <Compile Include="GeoIP.cs" />
+    <Compile Include="Hooks.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

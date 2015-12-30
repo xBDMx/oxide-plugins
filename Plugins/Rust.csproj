@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{28D59FFC-8D7E-47B0-8FF5-03BB8EA5067D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Rust</RootNamespace>
+    <AssemblyName>Rust</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\Rust\</OutputPath>
+    <DefineConstants>RUST</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.Network">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Facepunch.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.System">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Facepunch.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.UnityEngine">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Facepunch.UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core">
+      <HintPath>..\..\Oxide\Bundles\Rust\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.CSharp">
+      <HintPath>..\..\Oxide\Bundles\Rust\RustDedicated_Data\Managed\Oxide.Ext.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.Unity">
+      <HintPath>..\..\Oxide\Bundles\Rust\RustDedicated_Data\Managed\Oxide.Ext.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Game.Rust">
+      <HintPath>..\..\Oxide\Bundles\Rust\RustDedicated_Data\Managed\Oxide.Game.Rust.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Data">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\Rust.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.Rust\Dependencies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AFK.cs" />
+    <Compile Include="Announcer.cs" />
+    <Compile Include="AssetDump.cs" />
+    <Compile Include="CountryBlock.cs" />
+    <Compile Include="Duel.cs" />
+    <Compile Include="LootProtection.cs" />
+    <Compile Include="NameFilter.cs" />
+    <Compile Include="NoDurability.cs" />
+    <Compile Include="NoSuicide.cs" />
+    <Compile Include="RepairBuildings.cs" />
+    <Compile Include="Reserved.cs" />
+    <Compile Include="Third-Party\AntiLockPick.cs" />
+    <Compile Include="AutoDoors.cs" />
+    <Compile Include="AutoFurnaces.cs" />
+    <Compile Include="CharitySigns.cs" />
+    <Compile Include="DeathSigns.cs" />
+    <Compile Include="HeliInbound.cs" />
+    <Compile Include="HideAndSeek.cs" />
+    <Compile Include="HomeSigns.cs" />
+    <Compile Include="MoneyTime.cs" />
+    <Compile Include="NoCold.cs" />
+    <Compile Include="NoSleepers.cs" />
+    <Compile Include="NoSteam.cs" />
+    <Compile Include="Parachute.cs" />
+    <Compile Include="Possession.cs" />
+    <Compile Include="RealisticFall.cs" />
+    <Compile Include="Robbery.cs" />
+    <Compile Include="Third-Party\SignArtist.cs" />
+    <Compile Include="Slap.cs" />
+    <Compile Include="SleeperGuard.cs" />
+    <Compile Include="Spectate.cs" />
+    <Compile Include="ThirdPerson.cs" />
+    <Compile Include="Third-Party\TimeWarnings.cs" />
+    <Compile Include="Third-Party\TurretConfig.cs" />
+    <Compile Include="Third-Party\UsableToBelt.cs" />
+    <Compile Include="Vanish.cs" />
+    <Compile Include="AutoLearn.cs" />
+    <Compile Include="ChatCleaner.cs" />
+    <Compile Include="ChatSize.cs" />
+    <Compile Include="Third-Party\ClipSize.cs" />
+    <Compile Include="CupboardAway.cs" />
+    <Compile Include="Third-Party\IDLookup.cs" />
+    <Compile Include="CupboardProtection.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="MasterKey.cs" />
+    <Compile Include="NoResearch.cs" />
+    <Compile Include="NoSupplySignal.cs" />
+    <Compile Include="HomeProtection.cs" />
+    <Compile Include="ServerTags.cs" />
+    <Compile Include="Developer.cs" />
+    <Compile Include="EmailTest.cs" />
+    <Compile Include="Exporter.cs" />
+    <Compile Include="FilterExt.cs" />
+    <Compile Include="GatherRewards.cs" />
+    <Compile Include="GeoIP.cs" />
+    <Compile Include="Hooks.cs" />
+    <Compile Include="Ping.cs" />
+    <Compile Include="Prefabs.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="PushTest.cs" />
+    <Compile Include="QuickSmelt.cs" />
+    <Compile Include="DecayControl.cs" />
+    <Compile Include="Unstuck.cs" />
+    <Compile Include="Version.cs" />
+    <Compile Include="Third-Party\ZLevels.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

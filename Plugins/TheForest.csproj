@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1209B8BF-B6D1-4BB8-9C70-C37628B95675}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>TheForest</RootNamespace>
+    <AssemblyName>TheForest</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\TheForest\</OutputPath>
+    <DefineConstants>THEFOREST</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-UnityScript">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\Assembly-UnityScript.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-UnityScript-firstpass">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\Assembly-UnityScript-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\bolt.dll</HintPath>
+    </Reference>
+    <Reference Include="bolt.user">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\bolt.user.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core">
+      <HintPath>..\..\Oxide\Bundles\TheForest\TheForest_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.CSharp">
+      <HintPath>..\..\Oxide\Bundles\TheForest\TheForest_Data\Managed\Oxide.Ext.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.Unity">
+      <HintPath>..\..\Oxide\Bundles\TheForest\TheForest_Data\Managed\Oxide.Ext.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Game.TheForest">
+      <HintPath>..\..\Oxide\Bundles\TheForest\TheForest_Data\Managed\Oxide.Game.TheForest.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="udpkit">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\udpkit.dll</HintPath>
+    </Reference>
+    <Reference Include="udpkit.common">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\udpkit.common.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.TheForest\Dependencies\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Announcer.cs" />
+    <Compile Include="CountryBlock.cs" />
+    <Compile Include="FilterExt.cs" />
+    <Compile Include="Hooks.cs" />
+    <Compile Include="Logger.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

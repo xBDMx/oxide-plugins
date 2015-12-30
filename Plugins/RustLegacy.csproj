@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{35169AA8-EB52-4506-B4A7-4A1FEF7CCEC2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RustLegacy</RootNamespace>
+    <AssemblyName>RustLegacy</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\RustLegacy\</OutputPath>
+    <DefineConstants>RUSTLEGACY</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.RustLegacy\Dependencies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.ID">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.RustLegacy\Dependencies\Facepunch.ID.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Oxide\Oxide.Core\Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core">
+      <HintPath>..\..\Oxide\Bundles\RustLegacy\rust_server_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.CSharp">
+      <HintPath>..\..\Oxide\Bundles\RustLegacy\rust_server_Data\Managed\Oxide.Ext.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Ext.Unity">
+      <HintPath>..\..\Oxide\Bundles\RustLegacy\rust_server_Data\Managed\Oxide.Ext.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Game.RustLegacy">
+      <HintPath>..\..\Oxide\Bundles\RustLegacy\rust_server_Data\Managed\Oxide.Game.RustLegacy.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="uLink">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.RustLegacy\Dependencies\uLink.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\Oxide\Games\Unity\Oxide.Game.RustLegacy\Dependencies\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Announcer.cs" />
+    <Compile Include="CountryBlock.cs" />
+    <Compile Include="GeoIP.cs" />
+    <Compile Include="Spiritwalk.cs" />
+    <Compile Include="TimerTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
